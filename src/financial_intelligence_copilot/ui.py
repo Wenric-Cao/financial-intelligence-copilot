@@ -11,6 +11,7 @@ import streamlit as st
 
 from financial_intelligence_copilot.answer import answer_question
 from financial_intelligence_copilot.evaluation_records import load_development_record
+from financial_intelligence_copilot.financial_answer import answer_reviewed_kpi
 from financial_intelligence_copilot.financial_kpis import candidate_csv
 from financial_intelligence_copilot.kpi_reviews import comparison_results, load_review_state
 from financial_intelligence_copilot.retrieval import load_retriever
@@ -106,11 +107,58 @@ def _clear_reviews() -> None:
 
 def _render_response(response: dict) -> None:
     st.divider()
-    st.subheader("Report evidence")
+    financial_lookup = response.get("mode") == "reviewed_kpi_lookup"
+    st.subheader("Reviewed financial fact" if financial_lookup else "Report evidence")
     st.caption(f"Response to: {response['query']}")
     if response["status"] == "abstained":
         st.warning(response["message"])
         st.caption(f"Reason: {response['reason'].replace('_', ' ')}")
+    elif financial_lookup:
+        item = response["financial_fact"]
+        st.info(
+            "Reported annual level from a recorded fact confirmation. No comparison is implied."
+        )
+        st.write(item["metric_name"])
+        units = " ".join(part for part in (item["currency"], item["unit"]) if part)
+        st.metric("Reported annual level", f"{item['value']} {units}")
+        st.caption(f"FY{item['fiscal_year']} · Physical PDF page {item['source_pdf_page']}")
+        st.write(f"Annual period: {item['period_start']} to {item['period_end']}")
+        st.write("Scope: " + item["scope"])
+        st.write("Basis: " + item["basis"])
+        st.caption("Original numeric source token (not a complete answer quotation)")
+        st.code(item["source_snippet"], language=None, wrap_lines=True)
+        st.link_button(
+            f"Open official report · PDF page {item['source_pdf_page']}",
+            official_pdf_link(item["source_url"], item["source_pdf_page"]),
+        )
+        with st.expander("Source context and recorded review"):
+            st.code(item["source_row_snippet"], language=None, wrap_lines=True)
+            if item.get("source_header"):
+                st.code(item["source_header"]["text"], language=None, wrap_lines=True)
+            st.write("Recorded reviewer: " + item["reviewer"])
+            st.write("Recorded review time: " + item["reviewed_at"])
+            st.write("Review notes: " + item["fact_review"]["notes"])
+            st.write("Comparability caveats: " + item["comparability_notes"])
+            st.caption(
+                "Recorded metadata and content hashes do not authenticate reviewer identity."
+            )
+            st.code(
+                json.dumps(
+                    {
+                        "candidate_id": item["candidate_id"],
+                        "source_doc_id": item["source_doc_id"],
+                        "source_sha256": item["source_sha256"],
+                        "page_character_range": [
+                            item["source_char_start"],
+                            item["source_char_end"],
+                        ],
+                        "definition_pages": item.get("definition_pages", []),
+                    },
+                    indent=2,
+                ),
+                language="json",
+            )
+        st.caption(response["notice"])
     else:
         st.info(
             "Original-text excerpts. Evidence may be partial; review the report for full context."
@@ -152,8 +200,8 @@ def _render_about(root: Path, documents: list[dict]) -> None:
     st.subheader("Evidence you can inspect")
     st.write(
         "This prototype helps researchers inspect AIA annual-report evidence with traceable "
-        "physical PDF page references. The current mode returns original text "
-        "or an explicit abstention."
+        "physical PDF page references. Original excerpts and a separate reviewed annual KPI "
+        "lookup retain their distinct evidence and review requirements."
     )
     st.caption("Official PDF → Page-preserving text → Local retrieval → Source-span validation")
     st.markdown("**Official report sources**")
@@ -247,6 +295,12 @@ def _render_about(root: Path, documents: list[dict]) -> None:
             "Financial tabs read recorded fact and comparability decisions. Formal semantic "
             "evaluation needs separate owner review. Generative answering is a separate product "
             "decision. This mode makes no model API calls."
+        )
+        st.write(
+            "Reviewed KPI lookup revalidates a separate local fact store before display. "
+            "It supports one reported annual level; it does not interpret definitions, "
+            "convert currencies or calculate comparisons. A fact confirmation does not "
+            "establish comparability or authenticate the recorded reviewer."
         )
 
 
@@ -544,7 +598,7 @@ def run_app(root: Path | None = None) -> None:
     st.caption("FINANCIAL RESEARCH WORKSPACE")
     st.title("Financial Intelligence Copilot")
     st.write("Annual-report research, with evidence you can inspect.")
-    st.caption("Local extractive mode · Research demonstration only - not investment advice.")
+    st.caption("Local research modes · Research demonstration only - not investment advice.")
 
     documents, revision, data_error = [], None, None
     try:
@@ -562,14 +616,20 @@ def run_app(root: Path | None = None) -> None:
             "Fiscal year", years, key="fiscal_year", format_func=lambda year: f"FY{year}"
         )
         st.caption("English official annual reports. One selected report per question.")
+        answer_mode = st.selectbox(
+            "Answer mode", ["Original excerpts", "Reviewed KPI lookup"], key="answer_mode"
+        )
         st.divider()
-        st.markdown("**Local extractive mode**")
-        st.caption("Original-text excerpts. No generated summaries or model API calls.")
+        st.markdown("**Local research modes**")
+        st.caption(
+            "Original excerpts or a single reviewed annual KPI level. "
+            "No generated summaries or model API calls."
+        )
         recheck = st.button("Recheck local sources", disabled=bool(data_error))
 
     document = next((item for item in documents if item["fiscal_year"] == fiscal_year), None)
     doc_id = document["doc_id"] if document else f"AIA-{fiscal_year}-EN"
-    active_scope = (str(root), doc_id, fiscal_year, revision)
+    active_scope = (str(root), doc_id, fiscal_year, revision, answer_mode)
     if st.session_state.get("_active_scope") != active_scope:
         _clear_response_and_engine()
         st.session_state["_active_scope"] = active_scope
@@ -585,7 +645,9 @@ def run_app(root: Path | None = None) -> None:
     left, middle, right = st.columns(3)
     left.metric("Registered reports", len(documents))
     middle.metric("Selected report", f"FY{fiscal_year}")
-    right.metric("Response mode", "Excerpts")
+    right.metric(
+        "Response mode", "Reviewed KPI" if answer_mode == "Reviewed KPI lookup" else "Excerpts"
+    )
     tabs = st.tabs(
         ["Ask the Annual Report", "Financial KPIs", "Year-over-Year", "About & Evaluation"]
     )
@@ -594,6 +656,13 @@ def run_app(root: Path | None = None) -> None:
         st.caption(
             "Choose an example or ask an English question. Every released quote retains its source."
         )
+        if answer_mode == "Reviewed KPI lookup":
+            st.info(
+                "Look up one reported annual metric: VONB, ANP, VONB_MARGIN, OPAT or UFSG. "
+                "For example: What is AIA's VONB in USD million? "
+                "Only explicitly confirmed facts in the current local reviewed store can be shown. "
+                "Definitions, multiple metrics and comparisons are outside this lookup mode."
+            )
         if data_error:
             st.error(f"Local data is unavailable. {data_error}")
             st.caption("Restore the registered local files and rebuild the index using the README.")
@@ -617,10 +686,15 @@ def run_app(root: Path | None = None) -> None:
             st.session_state.pop("_load_error", None)
             try:
                 with st.spinner("Checking sources and finding report evidence..."):
-                    engine = _verified_engine(root, revision)
-                    response = answer_question(
-                        engine, question, doc_id=doc_id, fiscal_year=fiscal_year
-                    )
+                    if answer_mode == "Reviewed KPI lookup":
+                        response = answer_reviewed_kpi(
+                            root, question, doc_id=doc_id, fiscal_year=fiscal_year
+                        )
+                    else:
+                        engine = _verified_engine(root, revision)
+                        response = answer_question(
+                            engine, question, doc_id=doc_id, fiscal_year=fiscal_year
+                        )
                     if workspace_fingerprint(root, read_documents(root)) != revision:
                         raise ValueError(
                             "Local sources changed during the query. Recheck and try again."
@@ -632,6 +706,22 @@ def run_app(root: Path | None = None) -> None:
         if st.session_state.get("_load_error"):
             st.error("Could not verify local sources. " + st.session_state["_load_error"])
         response = st.session_state.get("_response")
+        if response and response.get("mode") == "reviewed_kpi_lookup" and not submitted:
+            try:
+                response = answer_reviewed_kpi(
+                    root, response["query"], doc_id=doc_id, fiscal_year=fiscal_year
+                )
+                if workspace_fingerprint(root, read_documents(root)) != revision:
+                    raise ValueError(
+                        "Local sources changed before the financial response display. "
+                        "Recheck and try again."
+                    )
+                st.session_state["_response"] = response
+            except DATA_ERRORS as exc:
+                _clear_response_and_engine()
+                st.session_state["_load_error"] = str(exc)
+                st.error("Could not verify the reviewed KPI response. " + str(exc))
+                response = None
         if response:
             _render_response(response)
         else:
@@ -643,7 +733,14 @@ def run_app(root: Path | None = None) -> None:
         _render_comparisons(root, revision, data_error)
     with tabs[3]:
         _render_about(root, documents)
-    if st.session_state.get("_engine_revision") == revision and revision is not None:
+    current_response = st.session_state.get("_response")
+    if (
+        current_response
+        and current_response.get("mode") == "reviewed_kpi_lookup"
+        and current_response["status"] == "reviewed_kpi"
+    ):
+        source_status.success("Reviewed KPI sources checked")
+    elif st.session_state.get("_engine_revision") == revision and revision is not None:
         source_status.success("Local sources checked")
     else:
         source_status.caption("Source verification runs before the first response.")

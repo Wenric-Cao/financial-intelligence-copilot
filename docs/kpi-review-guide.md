@@ -180,4 +180,8 @@ source changes. `--check` does not alter files. Consumers must revalidate throug
 the loader rather than trust a saved flag. Only explicit confirmed facts appear
 with their recorded reviewer, timestamp, notes and source context. Content hashes
 do not authenticate the reviewer, and fact confirmation leaves comparability
-pending. Numerical Q&A is not connected to this store yet.
+pending. Stage 12 provides a separate bounded **Reviewed KPI lookup** mode that
+revalidates a current store and releases only a matching confirmed annual fact.
+Current real queries still return no financial value. Default excerpt answers
+and financial comparison gates retain their independent behavior. See the
+[lookup instructions](../README.md#look-up-a-reviewed-annual-kpi).

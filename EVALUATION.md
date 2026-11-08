@@ -9,6 +9,12 @@ historical after-fix record below, with its original date and null human scores.
 Source-data changes reject it; code/configuration differences are labeled as an
 older snapshot. Opening the view does not rerun or update this evaluation.
 
+Stage 12 adds a separate reviewed KPI lookup mode. The forty-case results below
+still describe the historical original-excerpt workflow. They were not rerun,
+extended to the lookup mode or turned into numerical-answer accuracy. Its
+source/review gates have separate neutral-fixture tests and real pending-state
+probes; no actual human review or semantic score has been recorded.
+
 ## What has actually run
 
 The 40-case development suite completed two real runs against the registered

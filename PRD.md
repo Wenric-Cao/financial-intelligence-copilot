@@ -37,6 +37,11 @@ generate summaries. Model integration would require a separate product decision,
 provider configuration and approval of any external API cost; no model API is
 configured or called in the current mode.
 
+A separate explicit Reviewed KPI lookup mode supports bounded English queries
+for one reviewed annual level, preserving exact values and source/review context.
+It does not generate financial prose, reinterpret unsupported qualifications or
+approve facts by matching a source token. Actual AIA records remain pending.
+
 The MVP includes report ingestion, scoped evidence retrieval, source inspection,
 reviewed KPIs, guarded Python comparisons, comparison charts, actual evaluation
 records and a reproducible English portfolio demonstration. Financial review and
@@ -88,7 +93,7 @@ materials and decision formats.
 
 ## Current evidence and quality acceptance
 
-The implementation has **490 passing automated tests**. The repaired 40-case
+The implementation has **575 passing automated tests**. The repaired 40-case
 development run recorded **40/40 engineering behavior matches**, **12/12 literal
 released-source spans**, and **21/28 proposed evidence-page hits within five
 results**. There are **0 approved gold answers and 0 human-scored cases**; all
@@ -110,8 +115,10 @@ acceptance cases are needed for a future held-out claim.
 1. Accept factual evidence cases and review the ten KPI candidates and five
    annual pairs, resolving NCI definitions, reported versus CER presentation,
    FY2025 tax changes and any restatement questions.
-2. Populate the separate reviewed store from explicit decisions and exercise the integrated
-   guarded comparisons/charts on actual data for all three required scenarios.
+2. Populate the separate reviewed store from explicit decisions and exercise the
+   bounded KPI lookup and guarded comparisons/charts on actual data for all three
+   required scenarios. The lookup mechanism is implemented; current real queries
+   still return no financial value.
 3. Approve evaluation references, score frozen responses and publish honest
    results with known omissions and failures.
 4. Complete reproducibility and English demonstration materials, then obtain

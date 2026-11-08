@@ -13,6 +13,7 @@ from financial_intelligence_copilot import ui
 from financial_intelligence_copilot.indexing import build_index
 from financial_intelligence_copilot.kpi_reviews import make_review_packet
 from financial_intelligence_copilot.pdf_parser import DocumentMetadata, parse_pdf
+from financial_intelligence_copilot.verified_store import write_verified_store
 
 ARCHIVE_QUERY = "Who approves the records framework?"
 BOARD_TEXT = "The Archive Board oversees archive stewardship and approves the records framework."
@@ -548,3 +549,202 @@ def test_historical_evaluation_projection_is_labeled_and_clears_after_reader_fai
     assert any("Evaluation record validation failed" in item.value for item in app.error)
     table_text = "\n".join(item.value.to_string(index=False) for item in app.dataframe)
     assert all(value not in table_text for value in ("40/40", "12/12", "21/28"))
+
+
+def reviewed_lookup_app(
+    root: Path, *, confirmed: bool = True, include_definition_pages: bool = True
+) -> AppTest:
+    """Use only labeled neutral schema quantities, never actual company data."""
+    candidate_path = write_neutral_candidate(root)
+    if not include_definition_pages:
+        dataset = json.loads(candidate_path.read_text())
+        dataset["candidates"][0].pop("definition_pages")
+        candidate_path.write_text(json.dumps(dataset), encoding="utf-8")
+    packet = make_review_packet(json.loads(candidate_path.read_text())["candidates"])
+    if confirmed:
+        review = packet["candidate_reviews"][0]
+        review.update(
+            decision="confirmed",
+            reviewer="TEST ONLY neutral lookup reviewer",
+            reviewed_at="2026-11-08T00:00:00+08:00",
+            notes="TEST ONLY recorded review of a neutral schema token.",
+            checks=dict.fromkeys(review["checks"], True),
+        )
+    (root / "data/kpi_reviews.json").write_text(json.dumps(packet), encoding="utf-8")
+    write_verified_store(root, root / "data/processed/verified-kpis.json")
+    app = app_for(root)
+    app.selectbox(key="answer_mode").set_value("Reviewed KPI lookup").run()
+    return app
+
+
+def test_reviewed_lookup_is_explicit_and_renders_fact_evidence_separately(ui_workspace):
+    app = reviewed_lookup_app(ui_workspace)
+    original_candidates = (ui_workspace / "data/kpi_candidates.json").read_bytes()
+    original_reviews = (ui_workspace / "data/kpi_reviews.json").read_bytes()
+
+    submit(app, "What is VONB for FY2025?")
+
+    assert response(app)["mode"] == "reviewed_kpi_lookup"
+    assert response(app)["status"] == "reviewed_kpi"
+    assert comparison_metrics(app)["Reported annual level"] == "12 USD million"
+    assert any(item.value == "Reviewed KPI sources checked" for item in app.success)
+    text = rendered_text(app)
+    assert "Original numeric source token (not a complete answer quotation)" in text
+    assert "TEST ONLY neutral lookup reviewer" in text
+    assert "Annual period: 2025-01-01 to 2025-12-31" in text
+    assert "Scope: Neutral UI schema fixture" in text
+    assert "Basis: Neutral schema routing" in text
+    assert "Fact confirmation does not establish comparability" in response(app)["notice"]
+    assert "Excerpt 1" not in text
+    assert (ui_workspace / "data/kpi_candidates.json").read_bytes() == original_candidates
+    assert (ui_workspace / "data/kpi_reviews.json").read_bytes() == original_reviews
+    assert all("approve" not in item.label.lower() for item in app.button)
+
+
+def test_reviewed_lookup_does_not_load_retriever(ui_workspace, monkeypatch):
+    app = reviewed_lookup_app(ui_workspace)
+
+    def no_retrieval(*args, **kwargs):
+        raise AssertionError("Reviewed annual lookup must not use the excerpt retriever")
+
+    monkeypatch.setattr(ui, "_verified_engine", no_retrieval)
+    submit(app, "What is VONB for FY2025?")
+    assert response(app)["status"] == "reviewed_kpi"
+
+
+def test_reviewed_lookup_without_optional_definition_pages_renders(ui_workspace):
+    app = reviewed_lookup_app(ui_workspace, include_definition_pages=False)
+    submit(app, "What is VONB for FY2025?")
+    assert response(app)["status"] == "reviewed_kpi"
+    assert "definition_pages" not in response(app)["financial_fact"]
+    assert comparison_metrics(app)["Reported annual level"] == "12 USD million"
+
+
+def test_reviewed_lookup_percent_level_preserves_reported_token_and_unit(ui_workspace):
+    write_neutral_comparison_inputs(ui_workspace, confirmed=True)
+    write_verified_store(ui_workspace, ui_workspace / "data/processed/verified-kpis.json")
+    app = app_for(ui_workspace)
+    app.selectbox(key="answer_mode").set_value("Reviewed KPI lookup").run()
+
+    submit(app, "What is VONB_MARGIN for FY2025?")
+
+    assert response(app)["status"] == "reviewed_kpi"
+    fact = response(app)["financial_fact"]
+    assert fact["value"] == "33" and fact["unit"] == "percent" and fact["currency"] is None
+    assert comparison_metrics(app)["Reported annual level"] == "33 percent"
+    assert any(item.value == "33%" for item in app.code)
+    assert "percentage_point_change" not in response(app)
+
+
+def test_pending_store_and_missing_store_do_not_release_numeric_candidates(ui_workspace):
+    app = reviewed_lookup_app(ui_workspace, confirmed=False)
+    submit(app, "What is VONB for FY2025?")
+    assert response(app)["status"] == "abstained"
+    assert response(app)["reason"] == "fact_review_pending"
+    assert response(app)["financial_fact"] is None
+    assert "Reported annual level" not in comparison_metrics(app)
+    (ui_workspace / "data/processed/verified-kpis.json").unlink()
+    app.run()
+    assert response(app) is None
+    submit(app, "What is VONB for FY2025?")
+    assert response(app)["reason"] == "verified_store_unavailable"
+    assert response(app)["financial_fact"] is None
+
+
+def test_answer_mode_change_clears_old_excerpt_and_lookup_responses(ui_workspace):
+    app = reviewed_lookup_app(ui_workspace)
+    submit(app, "What is VONB for FY2025?")
+    app.selectbox(key="answer_mode").set_value("Original excerpts").run()
+    assert response(app) is None
+    assert "Reported annual level" not in comparison_metrics(app)
+    submit(app)
+    assert response(app)["status"] == "extractive_evidence"
+    app.selectbox(key="answer_mode").set_value("Reviewed KPI lookup").run()
+    assert response(app) is None
+    assert BOARD_TEXT not in rendered_text(app)
+
+
+def test_changing_year_clears_prior_reviewed_lookup(ui_workspace):
+    app = reviewed_lookup_app(ui_workspace)
+    submit(app, "What is VONB for FY2025?")
+
+    app.selectbox(key="fiscal_year").set_value(2024).run()
+
+    assert response(app) is None
+    assert "Reported annual level" not in comparison_metrics(app)
+    submit(app, "What is VONB for FY2024?")
+    assert response(app)["status"] == "abstained"
+    assert response(app)["financial_fact"] is None
+
+
+@pytest.mark.parametrize(
+    "change", ["store_delete", "store_tamper", "review_revoke", "source_change"]
+)
+def test_lookup_dependency_changes_clear_old_numeric_response(ui_workspace, change):
+    app = reviewed_lookup_app(ui_workspace)
+    submit(app, "What is VONB for FY2025?")
+    assert "Reported annual level" in comparison_metrics(app)
+    if change.startswith("store"):
+        path = ui_workspace / "data/processed/verified-kpis.json"
+        if change == "store_delete":
+            path.unlink()
+        else:
+            data = json.loads(path.read_text())
+            data["records"][0]["value"] = "999"
+            path.write_text(json.dumps(data), encoding="utf-8")
+    elif change == "review_revoke":
+        path = ui_workspace / "data/kpi_reviews.json"
+        packet = json.loads(path.read_text())
+        packet["candidate_reviews"][0].update(
+            decision="pending",
+            reviewer=None,
+            reviewed_at=None,
+            notes="",
+            checks=dict.fromkeys(packet["candidate_reviews"][0]["checks"]),
+        )
+        path.write_text(json.dumps(packet), encoding="utf-8")
+    else:
+        path = ui_workspace / "data/raw/neutral_ui_fixture_2025.pdf"
+        path.write_bytes(path.read_bytes() + b"\nTEST ONLY changed source bytes\n")
+    app.run()
+    assert not app.exception
+    assert response(app) is None
+    assert "Reported annual level" not in comparison_metrics(app)
+
+
+def test_retained_lookup_is_revalidated_on_every_rerun(ui_workspace, monkeypatch):
+    app = reviewed_lookup_app(ui_workspace)
+    submit(app, "What is VONB for FY2025?")
+    original_lookup = ui.answer_reviewed_kpi
+    calls = 0
+
+    def reject_prior_response(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        raise ValueError("TEST ONLY revoked lookup despite an unchanged UI fingerprint")
+
+    monkeypatch.setattr(ui, "answer_reviewed_kpi", reject_prior_response)
+    app.run()
+
+    assert calls == 1
+    assert response(app) is None
+    assert "Reported annual level" not in comparison_metrics(app)
+    assert any("Could not verify the reviewed KPI response" in item.value for item in app.error)
+    monkeypatch.setattr(ui, "answer_reviewed_kpi", original_lookup)
+
+
+def test_lookup_snapshot_race_prevents_numeric_display(ui_workspace, monkeypatch):
+    app = reviewed_lookup_app(ui_workspace)
+    original_lookup = ui.answer_reviewed_kpi
+
+    def change_store_after_validation(root, query, **kwargs):
+        result = original_lookup(root, query, **kwargs)
+        path = root / "data/processed/verified-kpis.json"
+        path.write_bytes(path.read_bytes() + b"\n")
+        return result
+
+    monkeypatch.setattr(ui, "answer_reviewed_kpi", change_store_after_validation)
+    submit(app, "What is VONB for FY2025?")
+    assert response(app) is None
+    assert "Reported annual level" not in comparison_metrics(app)
+    assert any("Local sources changed during the query" in item.value for item in app.error)

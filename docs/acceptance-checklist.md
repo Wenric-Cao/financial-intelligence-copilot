@@ -11,7 +11,7 @@ is recorded with its qualifications.
 | --- | --- | --- |
 | Sources and pages | Two registered local official reports; page parsing and physical-page provenance recorded | Report/source and context acceptance pending |
 | Factual excerpts | Local report-scoped retrieval, exact-span cards, original-text answers and explicit refusals | At least five factual cases must be reviewed for relevance and completeness |
-| KPI facts | Ten source-backed candidates, separate confirmed-fact export and stale-store validator | 0/10 fact confirmations; real-data reviewed store is empty |
+| KPI facts | Ten source-backed candidates, separate reviewed store and bounded source-checked lookup mode/CLI | 0/10 fact confirmations; real-data store is empty and actual lookups abstain |
 | Comparisons | Separate pair decisions, readiness/source UI and conditional Plotly charts, tested with neutral fixtures | 0/5 actual pairs approved or calculated; real inputs need owner review |
 | Evaluation | Forty development cases, two actual runs, frozen source/run/response digests | 0/40 approved gold answers and 0 human-scored responses; semantic scores unavailable |
 | Portfolio | English README, PRD, architecture, evaluation record and scripted demonstration | Final demonstration/recording and product acceptance pending |

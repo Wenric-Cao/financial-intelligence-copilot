@@ -114,6 +114,7 @@ def test_duplicate_fiscal_year_inventory_is_rejected(workspace):
         "data/kpi_reviews.json",
         "data/evaluation_cases.json",
         "data/processed/phase-8-evaluation.after-fix.json",
+        "data/processed/verified-kpis.json",
         "pyproject.toml",
     ],
 )
@@ -131,3 +132,11 @@ def test_review_record_add_edit_and_removal_invalidate_revision(workspace, relat
     assert workspace_fingerprint(workspace, documents) != added
     target.unlink()
     assert workspace_fingerprint(workspace, documents) == absent
+
+
+def test_optional_reviewed_store_symlink_cannot_leave_workspace_even_when_target_missing(workspace):
+    documents = read_documents(workspace)
+    target = workspace / "data/processed/verified-kpis.json"
+    target.symlink_to(workspace.parent / "missing-outside-reviewed-store.json")
+    with pytest.raises(ValueError, match="outside"):
+        workspace_fingerprint(workspace, documents)

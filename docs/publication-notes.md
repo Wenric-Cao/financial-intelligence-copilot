@@ -35,6 +35,8 @@ The raw reports must be obtained independently from authorized official sources.
 No financial candidate, comparison pair, gold answer or human response rating is
 approved by publication. The initial public release recorded 446 passing tests;
 Stage 11 records 490 passing tests and an empty real-data reviewed-fact store.
+Stage 12 records 575 passing tests and the separate reviewed KPI lookup, with no
+actual financial value released. Its screenshot shows the genuine pending state.
 The forty-case development results retain their original recorded date
 and null human correctness scores. See `EVALUATION.md` and the acceptance guides
 for limitations and remaining work.

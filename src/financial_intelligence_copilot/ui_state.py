@@ -50,9 +50,12 @@ def workspace_fingerprint(root: Path, documents: list[dict]) -> str:
         "data/kpi_reviews.json",
         "data/evaluation_cases.json",
         "data/processed/phase-8-evaluation.after-fix.json",
+        "data/processed/verified-kpis.json",
         "pyproject.toml",
     ):
         optional = root / relative
+        if not optional.resolve().is_relative_to(root.resolve()):
+            raise ValueError("A local data path points outside the project workspace.")
         if optional.exists():
             paths.append(optional)
     for item in documents:

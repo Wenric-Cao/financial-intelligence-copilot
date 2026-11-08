@@ -2,7 +2,8 @@
 
 This is a local annual-report research prototype for AIA Group Limited's official
 FY2024 and FY2025 English reports. The implemented answer path retrieves evidence
-and releases original text with physical PDF-page references. It makes no model
+and releases original text with physical PDF-page references. A separate explicit
+lookup mode reads source-checked confirmed annual KPI facts. It makes no model
 API calls and does not generate summaries. Financial candidates, review decisions,
 arithmetic and evaluation judgments have separate boundaries.
 
@@ -24,6 +25,9 @@ flowchart TD
     F --> G[Separate fact and pair review records]
     G --> H[Shared guarded comparison backend]
     H --> E
+    G --> M[Separate confirmed-fact store]
+    M --> N[Revalidated bounded annual KPI lookup]
+    N --> E
     B --> I[Development evaluation CLI]
     J[Pending evaluation cases] --> I
     I --> K[Frozen run and pending human review packet]
@@ -61,6 +65,7 @@ model provider in the current runtime.
 | `comparison.py` | Check structural compatibility and perform pure `Decimal` arithmetic; it does not establish owner review or source validity |
 | `kpi_reviews.py` | Bind fact and comparability decisions to complete candidate digests; recheck source candidates and gate comparison results |
 | `verified_store.py` | Persist explicit fact confirmations separately; bind current input bytes and revalidate saved stores, including review revocation |
+| `financial_answer.py` | Recognize bounded single-metric annual lookup forms and release only a source-revalidated, scope-matching confirmed fact |
 | `evaluation.py` | Validate source-backed development drafts, run cases, record errors/latencies, check released spans and export pending human judgments |
 | `evaluation_records.py` | Validate historical run bindings/aggregates and current data dependencies; flag older code/configuration without inventing live scores |
 | `ui_charts.py` | Plot two reported annual levels from a calculated guarded result, preserving exact labels, percent units and source metadata |
@@ -69,6 +74,7 @@ model provider in the current runtime.
 | `scripts/check_kpi_candidates.py` | Check actual candidate PDF spans and export a pending review sheet |
 | `scripts/check_comparison_readiness.py` | Prepare all-pending review packets or audit guarded comparison readiness against current sources |
 | `scripts/build_verified_store.py` | Export a new local reviewed-fact JSON store or validate an existing one without modification |
+| `scripts/ask_reviewed_kpi.py` | Run the reviewed KPI lookup without a retrieval index; preserve response JSON and protect input paths |
 | `scripts/run_evaluation.py` | Load source-checked cases/index, freeze dependency fingerprints, preserve a raw run and create its pending human review packet |
 | `scripts/run_retrieval_smoke.py`, `scripts/run_extractive_smoke.py` | Preserve earlier engineering probes separately from the later development evaluation |
 
@@ -184,15 +190,30 @@ and requires the recorded data dependencies to match actual current bytes.
 Code/configuration differences are shown as historical context. Human scores
 remain unavailable; the counts are not presented as live accuracy.
 
+Ask has separate **Original excerpts** (default) and **Reviewed KPI lookup**
+modes. The latter uses a full-query grammar and the current canonical local
+store. It releases only a matching annual metric after source/review checks,
+with exact decimal strings, period/scope/basis and explicit numeric-token and
+review labels. It does not synthesize an explanation or turn an annual group
+level into a regional, interim, currency-adjusted or comparable value. The
+original excerpt engine and historical evaluation remain a separate mode.
+
 The validated retriever and KPI candidates are cached in the individual
 Streamlit session. There is no shared global mutable engine cache. Each rerun
 hashes actual bytes of the manifest, policy, index, both raw PDFs, page snapshots
-and optional candidate/review files, evaluation suite/record and project config.
-A workspace revision or fiscal-year change
+and optional candidate/review/store files, evaluation suite/record and project config.
+A workspace revision, answer-mode or fiscal-year change
 clears old responses and cached objects. The answer path also checks the
 fingerprint after loading and after answering; **Recheck local sources** forces
 fresh validation. Missing or inconsistent sources display errors rather than
 release a previous response.
+
+Retained lookup responses are revalidated through `answer_reviewed_kpi` on each
+rerun before display; a saved verified flag is insufficient. An absent store
+produces an unavailable abstention, an unconfirmed metric produces no value,
+and a stale/malformed store produces an error. The current UI still requires
+the normal report/page/index inventory even though lookup does not call the
+retriever. The lookup CLI does not require an index.
 
 These checks run on rerun/query/recheck, not continuously while a browser page
 sits idle. The UI fingerprint does not cover every file in the repository. Review
@@ -247,8 +268,11 @@ integers. Revoked, deleted or changed decisions and altered stores fail closed.
 Exports refuse an existing filename. Candidate records remain unverified and
 unchanged; fact confirmation does not promote pair comparability. These are
 operator-recorded decisions, not authenticated reviewer identities. Consumers
-must use the loader rather than trust a saved `verified` field. The current UI
-and comparisons still read live reviews, and Q&A does not use this store.
+must use the loader rather than trust a saved `verified` field. The financial
+tabs and comparisons still read live reviews. The separate Stage 12 lookup mode
+uses this store; its full-query grammar refuses unsupported qualifications,
+multi-metric queries, mismatched years/companies and incompatible units. An
+annual lookup also requires a complete January-to-December source period.
 
 The pure functions in `comparison.py` have a narrower contract: they validate
 structural compatibility and calculate exact finite `Decimal` differences.
@@ -317,7 +341,8 @@ The remaining gates are explicit:
 
 1. Owner-confirmed financial facts and separate comparability decisions. A
    distinct reviewed-store exporter/validator is implemented; populated real
-   inputs and integration with numerical answers remain pending.
+   inputs and actual numerical-answer acceptance remain pending. The bounded
+   reviewed-fact lookup path is implemented, with neutral positive-path tests.
 2. Exercise the integrated comparison/chart path on actual data after explicit
    approval; the current positive-path demonstrations use neutral fixtures only.
 3. Owner-approved evaluation gold and human scoring of frozen responses, followed

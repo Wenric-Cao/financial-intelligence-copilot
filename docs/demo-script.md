@@ -1,14 +1,18 @@
 # Two-minute portfolio demonstration
 
-Updated for the Stage 10 interface on 2026-11-08; evaluation observations retain
-their recorded Stage 8 date. The current
-application is a local **verbatim-excerpt research prototype**. Verified financial
-answers, approved comparisons/charts and owner-scored evaluation remain
+Updated for the Stage 12 interface on 2026-11-08; evaluation observations retain
+their recorded Stage 8 date. The current application is a local research
+prototype with **original excerpts** and a separate **reviewed annual KPI lookup**.
+Actual reviewed financial answers, approved comparisons/charts and owner-scored evaluation remain
 target-MVP work. Generative answering requires a separate product/configuration
 decision under the selected local mode. This script does not claim completion
 of those pending capabilities.
 
 ## Spoken script
+
+Use **Original excerpts** for the default script. The separate Stage 12 lookup
+can demonstrate the pending review gate; it does not replace the required actual
+verified-number scenario. Follow the README lookup instructions for that view.
 
 Approximately two minutes at a measured interview pace. The timing bands are
 cues, not measured recording times. Complete setup before speaking.

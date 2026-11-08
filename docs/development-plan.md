@@ -114,6 +114,15 @@ The candidate and review datasets stay unchanged. Numerical Q&A and populated
 financial acceptance remain pending. Actual commands/results are recorded in
 `phase-11-report.md`.
 
+Stage 12 connects the reviewed store to an explicit annual KPI lookup mode in
+the Ask tab and a standalone CLI. Each released value must be a current,
+source-revalidated confirmed fact for the selected report, metric and full
+annual period. Unsupported definitions/qualifiers, conversions and comparisons
+are refused. UI mode/year/source/store changes clear old responses; retained
+lookup answers revalidate on rerun. The original excerpt path stays separate.
+All 575 tests passed; actual pending AIA queries released no financial values.
+No real approvals, comparisons or human scores changed. See `phase-12-report.md`.
+
 Next, the owner can review at least five factual cases in the interface and the
 ten KPI candidates using `kpi-review-guide.md`. VONB, ANP, VONB margin, OPAT and
 UFSG have independently sourced annual values. OPAT's shareholder scope, margin's

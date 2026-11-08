@@ -12,7 +12,7 @@ and demonstration materials. Other languages are used only when necessary, such
 as preserving original source evidence or meeting an explicit requirement.
 See `AGENTS.md` for the project language policy.
 
-## Current implementation: Stage 11 reviewed-fact persistence
+## Current implementation: Stage 12 reviewed KPI lookup
 
 Read the [product requirements](PRD.md), [implemented architecture](ARCHITECTURE.md),
 [actual evaluation](EVALUATION.md), [English demonstration script](docs/demo-script.md)
@@ -39,14 +39,30 @@ Stage 11 adds a separate local JSON store containing only explicitly confirmed
 KPI facts. Its export/check commands revalidate current source PDFs, candidates
 and review decisions; stale or altered stores are rejected. The actual pending
 AIA packet exports **0 reviewed facts**. Fact confirmation does not approve a
-comparison. The current UI and comparison backend continue to validate live
-reviews; Q&A does not consume the store or unlock numerical answers.
+comparison. The financial tabs and comparison backend continue to validate live
+reviews. Stage 12 adds an explicit **Reviewed KPI lookup** mode to Ask the Annual
+Report, alongside the default **Original excerpts**. It revalidates the store on
+each lookup and returns only a matching confirmed annual fact, with its exact
+decimal value, source page and review context. Current AIA queries still abstain;
+no real numerical answer has been approved or released.
 
 Stage 11 passed **490 automated tests** (5 dependency deprecation warnings),
 Ruff check/format and dependency consistency checks. The new backend/CLI tests
 use explicit nonfinancial fixtures. Real-source export/check retained 0/10
 confirmed facts and 0/5 calculated pairs. See the
 [actual Stage 11 record](docs/phase-11-report.md).
+
+The new lookup deliberately supports one metric's reported annual level. It
+rejects definition/basis interpretation, regional/interim data, conversions,
+derived ratios, multiple metrics and comparisons. It does not infer what an
+unsupported question meant. VONB margin stays a percent metric, separate from
+after-NCI VONB and ANP; the lookup never recomputes it.
+
+Stage 12 passed **575 automated tests** (5 existing dependency deprecation
+warnings), Ruff check/format and dependency consistency checks. Five actual
+metric lookups and five boundary queries released no unreviewed financial
+values. The historical forty-case evaluation was not rerun or relabeled as
+current lookup accuracy. See the [Stage 12 record](docs/phase-12-report.md).
 
 A 40-case development suite and evaluation runner are now available. The actual
 after-fix run completed 40/40 cases, matched 40/40 current-mode engineering
@@ -64,6 +80,11 @@ cases**; no answer, numerical or citation-relevance accuracy is claimed. See
 The first two captures are recorded Stages 5/6 views. The last is the Stage 10
 interface reading the historical Stage 8 evaluation. Candidate values remain
 pending owner verification; historical behavior/page counts are not live accuracy.
+
+![Reviewed KPI lookup with actual pending fact review](assets/screenshots/reviewed-kpi-pending.jpg)
+
+The Stage 12 capture shows the genuine pending state: the new mode releases no
+unreviewed AIA financial value.
 
 ### First run in a new checkout
 
@@ -247,6 +268,46 @@ Review metadata records an operator-entered decision; content hashes do not
 authenticate a human reviewer. A confirmed fact retains pending comparability,
 and the existing separate pair/structural gates still govern calculations.
 
+### Look up a reviewed annual KPI
+
+The UI lookup uses `data/processed/verified-kpis.json`. Export that local file
+once, using a fresh path if an earlier export exists:
+
+```bash
+.venv/bin/python scripts/build_verified_store.py \
+  --output data/processed/verified-kpis.json
+.venv/bin/python scripts/ask_reviewed_kpi.py \
+  --doc-id AIA-2025-EN --fiscal-year 2025 \
+  --query "What is AIA's VONB in USD million?"
+```
+
+With the real all-pending review packet, the second command returns `abstained`
+with `fact_review_pending` and no financial fact. A missing store returns
+`verified_store_unavailable`; stale/invalid stores and source failures are errors,
+not a reason to trust a previously saved value. Exporting does not approve facts.
+After an actual review decision changes, create a fresh store under a new name
+and validate it. The CLI accepts `--store` (relative paths use `--root`) and an
+optional new `--output` response path. The UI reads only the canonical filename;
+deliberately adopt a current export there after preserving an earlier local
+record. The app never rewrites review decisions or stores.
+
+In the sidebar choose **Reviewed KPI lookup**, select the report year, and ask
+one of these bounded forms: `VONB`, `Show ANP for FY2025`,
+`What is AIA's VONB in USD million?`, or `Show VONB_MARGIN in percent`.
+Supported metrics are VONB, ANP, VONB_MARGIN, OPAT and UFSG, with the explicit
+English aliases listed in `financial_answer.py`. No general financial question
+understanding is claimed. Queries for another year/company, unknown qualifiers
+or incompatible units do not release a value. A successful response labels an
+annual reported level and shows its period, scope, basis, source numeric token,
+row/header context and actual recorded fact review. A numeric token is not a
+sentence-level quote or a comparability decision.
+
+Mode/year/source/store changes clear previous UI responses. Retained reviewed
+answers are revalidated before display on each rerun. These checks occur when
+the app reruns, not continuously in an idle browser. The UI still requires the
+normal local report/page/index inventory to be present; the standalone lookup
+CLI needs the local source/candidate/review/store inputs but no retrieval index.
+
 ## Obtain the two official reports manually
 
 1. Open [AIA's official Annual Reports page](https://www.aia.com/en/media-centre/annual-reports).
@@ -360,6 +421,7 @@ scripts/run_extractive_smoke.py      # Excerpt/provenance and refusal probes
 scripts/check_kpi_candidates.py     # Raw-PDF provenance check and pending CSV
 scripts/check_comparison_readiness.py # Pending review packet / guarded audit
 scripts/build_verified_store.py      # Export/revalidate explicit reviewed facts
+scripts/ask_reviewed_kpi.py          # Bounded annual-level lookup from reviewed store
 scripts/run_evaluation.py            # Actual development run and pending review export
 tests/                             # Neutral fixtures, provenance and scope tests
 data/manifest.csv                  # Actual source metadata for the two reports
