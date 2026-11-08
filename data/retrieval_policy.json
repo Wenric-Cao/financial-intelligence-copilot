@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "max_words": 180,
+  "overlap_words": 30,
+  "min_words": 8,
+  "review_status": "engineering_checked_owner_pending",
+  "excluded_pdf_pages": {
+    "AIA-2024-EN": {
+      "1": "Cover; no substantive research evidence.",
+      "3": "Promotional slogan; no substantive research evidence.",
+      "4": "Contents navigation; retrieve the substantive pages instead."
+    },
+    "AIA-2025-EN": {
+      "1": "Cover; no substantive research evidence.",
+      "3": "Promotional artwork; no native text.",
+      "4": "Contents navigation with replacement-character leader noise.",
+      "22": "Section contents with replacement-character leader noise.",
+      "76": "Section contents with replacement-character leader noise.",
+      "146": "Section contents with replacement-character noise and column concatenation.",
+      "363": "Publisher web address only; no substantive research evidence."
+    }
+  }
+}

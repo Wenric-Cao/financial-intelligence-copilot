@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "review_status": "pending_owner_review",
+  "notice": "Engineering-selected candidates only. Source-span checks do not verify financial definitions, column meaning, or comparability. No YoY calculation is authorized by this dataset.",
+  "candidates": [
+    {
+      "candidate_id": "AIA-2024-VONB",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2024,
+      "metric_code": "VONB",
+      "metric_name": "Value of new business",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group consolidated Total, after non-controlling interests",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Use the reported Group Total after NCI, not Subtotal or a market segment. Narrative CER growth is a different basis from unadjusted annual USD levels. Review EV assumptions and tax treatment before comparison.",
+      "value": "4712",
+      "source_doc_id": "AIA-2024-EN",
+      "source_sha256": "0e888a5752d71ac8c841c234212cd3fc0cca9f16991db1f36a774f13b97890e3",
+      "source_pdf_page": 30,
+      "source_char_start": 1820,
+      "source_char_end": 1825,
+      "source_snippet": "4,712",
+      "source_row_start": 1782,
+      "source_row_end": 1884,
+      "source_row_snippet": "Total                                 4,712   54.5%    8,606     4,034   52.6%     7,650    18%    17%",
+      "source_header": {
+        "char_start": 164,
+        "char_end": 448,
+        "text": "                            2024                   2023           VONB Change\n\n                                        VONB                  VONB               YoY      YoY\n       US$ millions, unless otherwise stated        VONB   Margin    ANP   VONB   Margin    ANP     CER     AER"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/2024%20Annual%20Report%20%28Eng%29.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 335,
+          "topic": "Annual period and supplementary performance table"
+        },
+        {
+          "pdf_page": 347,
+          "topic": "Exchange-rate presentation"
+        },
+        {
+          "pdf_page": 370,
+          "topic": "VONB definition and Group adjustments"
+        }
+      ]
+    },
+    {
+      "candidate_id": "AIA-2024-ANP",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2024,
+      "metric_code": "ANP",
+      "metric_name": "Annualised new premiums",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group consolidated Total, reported new-business premium measure",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Confirm the annualised-first-year and single-premium definition and business exclusions. Do not substitute sales or PVNBP; narrative CER growth is not a change computed from these reported levels.",
+      "value": "8606",
+      "source_doc_id": "AIA-2024-EN",
+      "source_sha256": "0e888a5752d71ac8c841c234212cd3fc0cca9f16991db1f36a774f13b97890e3",
+      "source_pdf_page": 30,
+      "source_char_start": 1837,
+      "source_char_end": 1842,
+      "source_snippet": "8,606",
+      "source_row_start": 1782,
+      "source_row_end": 1884,
+      "source_row_snippet": "Total                                 4,712   54.5%    8,606     4,034   52.6%     7,650    18%    17%",
+      "source_header": {
+        "char_start": 164,
+        "char_end": 448,
+        "text": "                            2024                   2023           VONB Change\n\n                                        VONB                  VONB               YoY      YoY\n       US$ millions, unless otherwise stated        VONB   Margin    ANP   VONB   Margin    ANP     CER     AER"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/2024%20Annual%20Report%20%28Eng%29.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 335,
+          "topic": "Annual reporting period"
+        },
+        {
+          "pdf_page": 359,
+          "topic": "ANP definition and exclusions"
+        }
+      ]
+    },
+    {
+      "candidate_id": "AIA-2024-VONB_MARGIN",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2024,
+      "metric_code": "VONB_MARGIN",
+      "metric_name": "Value of new business margin",
+      "currency": null,
+      "unit": "percent",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; VONB gross of non-controlling interests and excluding pension business",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Company-defined margin uses VONB gross of NCI and excludes pension business. Do not recompute from the displayed net-NCI VONB divided by ANP. CER percentage-point commentary is distinct from changes in reported levels.",
+      "value": "54.5",
+      "source_doc_id": "AIA-2024-EN",
+      "source_sha256": "0e888a5752d71ac8c841c234212cd3fc0cca9f16991db1f36a774f13b97890e3",
+      "source_pdf_page": 30,
+      "source_char_start": 1828,
+      "source_char_end": 1833,
+      "source_snippet": "54.5%",
+      "source_row_start": 1782,
+      "source_row_end": 1884,
+      "source_row_snippet": "Total                                 4,712   54.5%    8,606     4,034   52.6%     7,650    18%    17%",
+      "source_header": {
+        "char_start": 164,
+        "char_end": 448,
+        "text": "                            2024                   2023           VONB Change\n\n                                        VONB                  VONB               YoY      YoY\n       US$ millions, unless otherwise stated        VONB   Margin    ANP   VONB   Margin    ANP     CER     AER"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/2024%20Annual%20Report%20%28Eng%29.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 335,
+          "topic": "Gross-NCI and pension-exclusion definition"
+        },
+        {
+          "pdf_page": 370,
+          "topic": "Group margin adjustments"
+        }
+      ]
+    },
+    {
+      "candidate_id": "AIA-2024-OPAT",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2024,
+      "metric_code": "OPAT",
+      "metric_name": "Operating profit after tax attributable to AIA shareholders",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; attributable to AIA shareholders, excluding non-controlling interests",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Use shareholder-attributable OPAT, not total OPAT including NCI or OPAT per share. FY2025 first includes notional GMT top-up tax and Bermuda corporate income tax; review the tax basis before comparison.",
+      "value": "6605",
+      "source_doc_id": "AIA-2024-EN",
+      "source_sha256": "0e888a5752d71ac8c841c234212cd3fc0cca9f16991db1f36a774f13b97890e3",
+      "source_pdf_page": 36,
+      "source_char_start": 3855,
+      "source_char_end": 3860,
+      "source_snippet": "6,605",
+      "source_row_start": 3797,
+      "source_row_end": 3896,
+      "source_row_snippet": "OPAT                                                      6,605         6,213         7%         6%",
+      "source_header": {
+        "char_start": 2333,
+        "char_end": 2440,
+        "text": "US$ millions, unless otherwise stated                           2024          2023(2)        CER        AER"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/2024%20Annual%20Report%20%28Eng%29.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 203,
+          "topic": "Total versus shareholder-attributable OPAT"
+        }
+      ]
+    },
+    {
+      "candidate_id": "AIA-2024-UFSG",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2024,
+      "metric_code": "UFSG",
+      "metric_name": "Underlying free surplus generation",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; net of tax, before new-business reinvestment and central costs",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Do not substitute operating free surplus generation, free surplus balance, or UFSG per share. FY2025 first includes notional GMT top-up tax; review the cash-generation definition and tax basis before comparison.",
+      "value": "6327",
+      "source_doc_id": "AIA-2024-EN",
+      "source_sha256": "0e888a5752d71ac8c841c234212cd3fc0cca9f16991db1f36a774f13b97890e3",
+      "source_pdf_page": 49,
+      "source_char_start": 1451,
+      "source_char_end": 1456,
+      "source_snippet": "6,327",
+      "source_row_start": 1393,
+      "source_row_end": 1493,
+      "source_row_snippet": "UFSG                                                      6,327          6,041         6%         5%",
+      "source_header": {
+        "char_start": 99,
+        "char_end": 607,
+        "text": "US$ millions, unless otherwise stated                          2024        2023        CER        AER                                                                                                                                                                                                                                                                                                                                                                                                               OVERVIEW"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/2024%20Annual%20Report%20%28Eng%29.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 48,
+          "topic": "Free-surplus generation explanation and components"
+        }
+      ]
+    },
+    {
+      "candidate_id": "AIA-2025-VONB",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2025,
+      "metric_code": "VONB",
+      "metric_name": "Value of new business",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group consolidated Total, after non-controlling interests",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Use the reported Group Total after NCI, not Subtotal or a market segment. Narrative CER growth is a different basis from unadjusted annual USD levels. Review EV assumptions and tax treatment before comparison. The EV/VONB assumptions exclude potential future GMT top-up tax; review Section 5.10 before comparing new-business measures.",
+      "value": "5516",
+      "source_doc_id": "AIA-2025-EN",
+      "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+      "source_pdf_page": 27,
+      "source_char_start": 2923,
+      "source_char_end": 2928,
+      "source_snippet": "5,516",
+      "source_row_start": 2884,
+      "source_row_end": 2987,
+      "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+      "source_header": {
+        "char_start": 469,
+        "char_end": 1059,
+        "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 326,
+          "topic": "Annual period and supplementary performance table"
+        },
+        {
+          "pdf_page": 338,
+          "topic": "Exchange-rate presentation"
+        },
+        {
+          "pdf_page": 343,
+          "topic": "Future GMT tax treatment"
+        },
+        {
+          "pdf_page": 362,
+          "topic": "VONB definition and Group adjustments"
+        }
+      ],
+      "prior_year_comparative": {
+        "reported_fiscal_year": 2024,
+        "value": "4712",
+        "source_doc_id": "AIA-2025-EN",
+        "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+        "source_pdf_page": 27,
+        "source_char_start": 2950,
+        "source_char_end": 2955,
+        "source_snippet": "4,712",
+        "source_row_start": 2884,
+        "source_row_end": 2987,
+        "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+        "source_header": {
+          "char_start": 469,
+          "char_end": 1059,
+          "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+        },
+        "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf"
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-ANP",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2025,
+      "metric_code": "ANP",
+      "metric_name": "Annualised new premiums",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group consolidated Total, reported new-business premium measure",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Confirm the annualised-first-year and single-premium definition and business exclusions. Do not substitute sales or PVNBP; narrative CER growth is not a change computed from these reported levels.",
+      "value": "9484",
+      "source_doc_id": "AIA-2025-EN",
+      "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+      "source_pdf_page": 27,
+      "source_char_start": 2940,
+      "source_char_end": 2945,
+      "source_snippet": "9,484",
+      "source_row_start": 2884,
+      "source_row_end": 2987,
+      "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+      "source_header": {
+        "char_start": 469,
+        "char_end": 1059,
+        "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 326,
+          "topic": "Annual reporting period"
+        },
+        {
+          "pdf_page": 351,
+          "topic": "ANP definition and exclusions"
+        }
+      ],
+      "prior_year_comparative": {
+        "reported_fiscal_year": 2024,
+        "value": "8606",
+        "source_doc_id": "AIA-2025-EN",
+        "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+        "source_pdf_page": 27,
+        "source_char_start": 2968,
+        "source_char_end": 2973,
+        "source_snippet": "8,606",
+        "source_row_start": 2884,
+        "source_row_end": 2987,
+        "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+        "source_header": {
+          "char_start": 469,
+          "char_end": 1059,
+          "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+        },
+        "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf"
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-VONB_MARGIN",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2025,
+      "metric_code": "VONB_MARGIN",
+      "metric_name": "Value of new business margin",
+      "currency": null,
+      "unit": "percent",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; VONB gross of non-controlling interests and excluding pension business",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Company-defined margin uses VONB gross of NCI and excludes pension business. Do not recompute from the displayed net-NCI VONB divided by ANP. CER percentage-point commentary is distinct from changes in reported levels. The EV/VONB assumptions exclude potential future GMT top-up tax; review Section 5.10 before comparing new-business measures.",
+      "value": "58.5",
+      "source_doc_id": "AIA-2025-EN",
+      "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+      "source_pdf_page": 27,
+      "source_char_start": 2931,
+      "source_char_end": 2936,
+      "source_snippet": "58.5%",
+      "source_row_start": 2884,
+      "source_row_end": 2987,
+      "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+      "source_header": {
+        "char_start": 469,
+        "char_end": 1059,
+        "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 326,
+          "topic": "Gross-NCI and pension-exclusion definition"
+        },
+        {
+          "pdf_page": 362,
+          "topic": "Group margin adjustments"
+        },
+        {
+          "pdf_page": 343,
+          "topic": "Potential future GMT top-up tax excluded from EV and VONB"
+        }
+      ],
+      "prior_year_comparative": {
+        "reported_fiscal_year": 2024,
+        "value": "54.5",
+        "source_doc_id": "AIA-2025-EN",
+        "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+        "source_pdf_page": 27,
+        "source_char_start": 2958,
+        "source_char_end": 2963,
+        "source_snippet": "54.5%",
+        "source_row_start": 2884,
+        "source_row_end": 2987,
+        "source_row_snippet": "Total                                  5,516   58.5%    9,484     4,712   54.5%     8,606    15%    17%",
+        "source_header": {
+          "char_start": 469,
+          "char_end": 1059,
+          "text": "                                     2025                   2024           VONB Change\n\n                                     VONB                  VONB               YoY      YoY\n US$ millions, unless otherwise stated         VONB   Margin    ANP   VONB   Margin    ANP     CER     AER                                                                                                                                                                                                                                                                                                           REVIEW"
+        },
+        "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf"
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-OPAT",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2025,
+      "metric_code": "OPAT",
+      "metric_name": "Operating profit after tax attributable to AIA shareholders",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; attributable to AIA shareholders, excluding non-controlling interests",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Use shareholder-attributable OPAT, not total OPAT including NCI or OPAT per share. FY2025 first includes notional GMT top-up tax and Bermuda corporate income tax; review the tax basis before comparison.",
+      "value": "7136",
+      "source_doc_id": "AIA-2025-EN",
+      "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+      "source_pdf_page": 35,
+      "source_char_start": 2894,
+      "source_char_end": 2899,
+      "source_snippet": "7,136",
+      "source_row_start": 2834,
+      "source_row_end": 2936,
+      "source_row_snippet": "OPAT(2)                                                     7,136          6,605         7%         8%",
+      "source_header": {
+        "char_start": 100,
+        "char_end": 715,
+        "text": "US$ millions, unless otherwise stated                            2025        2024         CER        AER                                                                                                                                                                                                                                                                                                                                                                                                               OVERVIEW CSM release                                                 6,224          5,625         10%        11%"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 34,
+          "topic": "First-time GMT and Bermuda tax charges"
+        },
+        {
+          "pdf_page": 35,
+          "topic": "Shareholder-attributable scope footnote"
+        },
+        {
+          "pdf_page": 191,
+          "topic": "Total versus shareholder-attributable OPAT"
+        }
+      ],
+      "prior_year_comparative": {
+        "reported_fiscal_year": 2024,
+        "value": "6605",
+        "source_doc_id": "AIA-2025-EN",
+        "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+        "source_pdf_page": 35,
+        "source_char_start": 2909,
+        "source_char_end": 2914,
+        "source_snippet": "6,605",
+        "source_row_start": 2834,
+        "source_row_end": 2936,
+        "source_row_snippet": "OPAT(2)                                                     7,136          6,605         7%         8%",
+        "source_header": {
+          "char_start": 100,
+          "char_end": 715,
+          "text": "US$ millions, unless otherwise stated                            2025        2024         CER        AER                                                                                                                                                                                                                                                                                                                                                                                                               OVERVIEW CSM release                                                 6,224          5,625         10%        11%"
+        },
+        "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf"
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-UFSG",
+      "issuer": "AIA Group Limited",
+      "fiscal_year": 2025,
+      "metric_code": "UFSG",
+      "metric_name": "Underlying free surplus generation",
+      "currency": "USD",
+      "unit": "million",
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31",
+      "period_basis": "Annual calendar-year period; start date follows the twelve-month year ending 31 December.",
+      "scope": "Group; net of tax, before new-business reinvestment and central costs",
+      "basis": "As-reported annual level; no constant-exchange-rate adjustment",
+      "comparability_status": "needs_owner_review",
+      "comparability_notes": "Do not substitute operating free surplus generation, free surplus balance, or UFSG per share. FY2025 first includes notional GMT top-up tax; review the cash-generation definition and tax basis before comparison.",
+      "value": "6765",
+      "source_doc_id": "AIA-2025-EN",
+      "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+      "source_pdf_page": 33,
+      "source_char_start": 2803,
+      "source_char_end": 2808,
+      "source_snippet": "6,765",
+      "source_row_start": 2744,
+      "source_row_end": 2845,
+      "source_row_snippet": "UFSG                                                       6,765          6,327         6%         7%",
+      "source_header": {
+        "char_start": 1625,
+        "char_end": 2296,
+        "text": "US$ millions, unless otherwise stated                            2025        2024         CER        AER                                                                                                                                                                                                                                                                                                                                                                                                                                                                 FINANCIAL Expected distributable earnings from in-force business            4,650          4,302         7%         8%"
+      },
+      "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf",
+      "verified": false,
+      "review_status": "pending_owner_review",
+      "reviewer": null,
+      "reviewed_at": null,
+      "definition_pages": [
+        {
+          "pdf_page": 33,
+          "topic": "UFSG definition and notional GMT footnote"
+        },
+        {
+          "pdf_page": 48,
+          "topic": "Notional versus actual GMT tax treatment"
+        }
+      ],
+      "prior_year_comparative": {
+        "reported_fiscal_year": 2024,
+        "value": "6327",
+        "source_doc_id": "AIA-2025-EN",
+        "source_sha256": "18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977",
+        "source_pdf_page": 33,
+        "source_char_start": 2818,
+        "source_char_end": 2823,
+        "source_snippet": "6,327",
+        "source_row_start": 2744,
+        "source_row_end": 2845,
+        "source_row_snippet": "UFSG                                                       6,765          6,327         6%         7%",
+        "source_header": {
+          "char_start": 1625,
+          "char_end": 2296,
+          "text": "US$ millions, unless otherwise stated                            2025        2024         CER        AER                                                                                                                                                                                                                                                                                                                                                                                                                                                                 FINANCIAL Expected distributable earnings from in-force business            4,650          4,302         7%         8%"
+        },
+        "source_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%202025%20annual%20report_EN.pdf"
+      }
+    }
+  ]
+}

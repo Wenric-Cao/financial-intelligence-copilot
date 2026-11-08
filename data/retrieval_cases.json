@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "purpose": "Engineering page-hit smoke tests, not a gold answer set or full RAG evaluation.",
+  "review_status": "engineering_checked_owner_pending",
+  "cases": [
+    {
+      "id": "smoke-2024-vitality",
+      "question": "According to AIA's 2024 annual report, what is AIA Vitality?",
+      "doc_id": "AIA-2024-EN",
+      "fiscal_year": 2024,
+      "expected_pdf_pages": [13, 359],
+      "evidence_terms": ["AIA Vitality", "wellness", "programme"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "PDF page 13 describes AIA Vitality; page 359 has its glossary entry."
+    },
+    {
+      "id": "smoke-2024-cybersecurity",
+      "question": "What cybersecurity certifications and assurance measures does AIA describe in its 2024 annual report?",
+      "doc_id": "AIA-2024-EN",
+      "fiscal_year": 2024,
+      "expected_pdf_pages": [68],
+      "evidence_terms": ["COMPREHENSIVE CYBERSECURITY", "ISO", "27001", "ISAE"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "PDF page 68 contains a substantive cybersecurity certification and assurance section."
+    },
+    {
+      "id": "smoke-2024-three-lines",
+      "question": "How does AIA's Three Lines model divide risk management responsibilities in its 2024 annual report?",
+      "doc_id": "AIA-2024-EN",
+      "fiscal_year": 2024,
+      "expected_pdf_pages": [75],
+      "evidence_terms": ["THREE LINES", "First Line", "Second Line", "Third Line"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "PDF page 75 explicitly describes the Three Lines roles and responsibilities."
+    },
+    {
+      "id": "smoke-2024-compliance-policy",
+      "question": "Which compliance areas are covered by the AIA Group Compliance Policy in the 2024 annual report?",
+      "doc_id": "AIA-2024-EN",
+      "fiscal_year": 2024,
+      "expected_pdf_pages": [134],
+      "evidence_terms": ["Compliance Policy", "whistleblowing", "anti-corruption"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "The final paragraph on PDF page 134 identifies the policy and its compliance areas."
+    },
+    {
+      "id": "smoke-2025-technology-committee",
+      "question": "According to AIA's 2025 annual report, what is the role of the Technology, Operations and Data Committee?",
+      "doc_id": "AIA-2025-EN",
+      "fiscal_year": 2025,
+      "expected_pdf_pages": [12],
+      "evidence_terms": ["Technology, Operations and Data Committee", "Board", "strategies"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "The Board Changes discussion on PDF page 12 describes the committee remit."
+    },
+    {
+      "id": "smoke-2025-vitality-care",
+      "question": "Which care pathways does AIA Vitality support according to AIA's 2025 annual report?",
+      "doc_id": "AIA-2025-EN",
+      "fiscal_year": 2025,
+      "expected_pdf_pages": [20],
+      "evidence_terms": ["AIA Vitality", "preventative care", "chronic disease management", "rehabilitation"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "The opening paragraph on PDF page 20 connects AIA Vitality with these care pathways."
+    },
+    {
+      "id": "smoke-2025-risk-appetite",
+      "question": "Which body sets AIA's Risk Appetite and approves its Risk Management Framework according to the 2025 annual report?",
+      "doc_id": "AIA-2025-EN",
+      "fiscal_year": 2025,
+      "expected_pdf_pages": [64],
+      "evidence_terms": ["The Board", "Risk Appetite", "approves", "RMF"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "The Risk Committee Structure discussion on PDF page 64 assigns these responsibilities."
+    },
+    {
+      "id": "smoke-2025-technology-risk",
+      "question": "What cybersecurity standards and AI governance arrangements does AIA describe under Technology Risk in its 2025 annual report?",
+      "doc_id": "AIA-2025-EN",
+      "fiscal_year": 2025,
+      "expected_pdf_pages": [69],
+      "evidence_terms": ["Technology Risk", "ISO", "NIST", "AI Standard", "AI Councils"],
+      "review_status": "engineering_checked_owner_pending",
+      "source_check_reason": "The Technology Risk subsection on PDF page 69 covers cybersecurity and AI governance."
+    }
+  ]
+}

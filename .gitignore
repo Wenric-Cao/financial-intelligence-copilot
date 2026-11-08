@@ -1,0 +1,40 @@
+# Local secrets. Only the example configuration belongs in version control.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.streamlit/secrets.toml
+
+# Local product-owner planning and agent bootstrap documents.
+/Codex_First_Task_Prompt.md
+/Financial_Intelligence_Copilot_Project_Plan.md
+
+# Annual reports, extracted full text, indexes, and local databases.
+/data/raw/*
+!/data/raw/.gitkeep
+/data/processed/*
+!/data/processed/.gitkeep
+*.pdf
+*.sqlite
+*.sqlite3
+*.db
+
+# Python environments, build output, and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Local operating-system and editor files.
+.DS_Store
+.idea/
+.vscode/
+tmp/

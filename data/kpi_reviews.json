@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "notice": "All decisions begin pending. Record explicit owner decisions only. Fact confirmation and pair comparability are separate reviews. Content hashes do not authenticate reviewer identity.",
+  "candidate_reviews": [
+    {
+      "candidate_id": "AIA-2024-ANP",
+      "candidate_digest": "01c429cadd3517a483daa06226586121d0db686db67699f1a1f6a3989cfb203d",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2024-OPAT",
+      "candidate_digest": "af210fc3a44d3d557ef0de55ad06a536761e86f51679a4741a40265180556bb9",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2024-UFSG",
+      "candidate_digest": "292bffb15d0a39deb8cc8e4286a6aa2ad2a1844bb7fbcb5a7d54f676a270a1b5",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2024-VONB",
+      "candidate_digest": "cdd06442548b28783a31bdbff10e9573b9610c771120448640b60c3ef8e95b26",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2024-VONB_MARGIN",
+      "candidate_digest": "e8dcfd6f268e9d7da43dc773ec7f4d5d2321014aea9e1af82ee6b1f4609dcbcb",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-ANP",
+      "candidate_digest": "6b9c5d1340dd0c7482e24f88179a37fe2f1c1d25965bbbc51392e771acb8bd3e",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-OPAT",
+      "candidate_digest": "5f0fb60a13e0cacaae8acd7567e9c7f953534565d4429c0f0e1432f28bb39773",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-UFSG",
+      "candidate_digest": "f806e8b015a9773dbf4f24291caa2d9a6334e42c917c872ca68b79abd106138b",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-VONB",
+      "candidate_digest": "7efcc2befee43ad6c3c49c053220ba3ebc1673c3513fb8f679e3f4798e0c454e",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    },
+    {
+      "candidate_id": "AIA-2025-VONB_MARGIN",
+      "candidate_digest": "a6e8c17c8df3d5dce2a4415a323df89d394c7f363695acdb9b4a4e54124f01bb",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "value": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "definition": null,
+        "source": null
+      }
+    }
+  ],
+  "comparison_reviews": [
+    {
+      "previous_candidate_id": "AIA-2024-ANP",
+      "current_candidate_id": "AIA-2025-ANP",
+      "previous_digest": "01c429cadd3517a483daa06226586121d0db686db67699f1a1f6a3989cfb203d",
+      "current_digest": "6b9c5d1340dd0c7482e24f88179a37fe2f1c1d25965bbbc51392e771acb8bd3e",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "definition": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "exchange_rate_basis": null,
+        "tax_basis": null,
+        "restatement": null
+      }
+    },
+    {
+      "previous_candidate_id": "AIA-2024-OPAT",
+      "current_candidate_id": "AIA-2025-OPAT",
+      "previous_digest": "af210fc3a44d3d557ef0de55ad06a536761e86f51679a4741a40265180556bb9",
+      "current_digest": "5f0fb60a13e0cacaae8acd7567e9c7f953534565d4429c0f0e1432f28bb39773",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "definition": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "exchange_rate_basis": null,
+        "tax_basis": null,
+        "restatement": null
+      }
+    },
+    {
+      "previous_candidate_id": "AIA-2024-UFSG",
+      "current_candidate_id": "AIA-2025-UFSG",
+      "previous_digest": "292bffb15d0a39deb8cc8e4286a6aa2ad2a1844bb7fbcb5a7d54f676a270a1b5",
+      "current_digest": "f806e8b015a9773dbf4f24291caa2d9a6334e42c917c872ca68b79abd106138b",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "definition": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "exchange_rate_basis": null,
+        "tax_basis": null,
+        "restatement": null
+      }
+    },
+    {
+      "previous_candidate_id": "AIA-2024-VONB",
+      "current_candidate_id": "AIA-2025-VONB",
+      "previous_digest": "cdd06442548b28783a31bdbff10e9573b9610c771120448640b60c3ef8e95b26",
+      "current_digest": "7efcc2befee43ad6c3c49c053220ba3ebc1673c3513fb8f679e3f4798e0c454e",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "definition": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "exchange_rate_basis": null,
+        "tax_basis": null,
+        "restatement": null
+      }
+    },
+    {
+      "previous_candidate_id": "AIA-2024-VONB_MARGIN",
+      "current_candidate_id": "AIA-2025-VONB_MARGIN",
+      "previous_digest": "e8dcfd6f268e9d7da43dc773ec7f4d5d2321014aea9e1af82ee6b1f4609dcbcb",
+      "current_digest": "a6e8c17c8df3d5dce2a4415a323df89d394c7f363695acdb9b4a4e54124f01bb",
+      "decision": "pending",
+      "reviewer": null,
+      "reviewed_at": null,
+      "notes": "",
+      "checks": {
+        "definition": null,
+        "unit_currency": null,
+        "period": null,
+        "scope": null,
+        "exchange_rate_basis": null,
+        "tax_basis": null,
+        "restatement": null
+      }
+    }
+  ]
+}
