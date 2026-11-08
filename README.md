@@ -7,6 +7,8 @@ year-over-year analysis, and a documented evaluation.
 
 **Research demonstration only - not investment advice.**
 
+[Open the live research workspace](https://financial-intelligence-copilot-wenric.streamlit.app/)
+
 English is the default for code, UI, documentation, tests, evaluation reports,
 and demonstration materials. Other languages are used only when necessary, such
 as preserving original source evidence or meeting an explicit requirement.
@@ -34,8 +36,12 @@ human evaluation judgments. The actual financial review gates remain pending.
 Automatic initialization passed **657 automated tests**, lint/format checks and
 dependency consistency checks. An actual-network local rehearsal downloaded both
 pinned official versions and preserved the same evidence and pending financial
-state. Hosted refresh/new-tab acceptance is recorded separately in the
-[Stage 14 report](docs/phase-14-report.md).
+state. Hosted acceptance completed on 2026-11-09 (Singapore): the original public
+URL loaded 734 pages / 2,159 chunks after a server reboot, browser refresh and a
+new tab without PDF selections. A fresh incognito window also loaded without
+login and returned FY2025 page 64 evidence with the pinned source hash. The
+unconfirmed VONB lookup still abstained with no financial value. See the
+[actual Stage 14 record](docs/phase-14-report.md#completed-hosted-acceptance).
 
 The earlier session-only cloud repair passed **609 automated tests** (5 existing dependency
 deprecation warnings), Ruff check/format and dependency consistency checks.

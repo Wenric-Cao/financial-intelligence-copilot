@@ -71,13 +71,65 @@ retains its physical page and empty-page status; OCR is still disabled. No
 invented text replaces it. The ignored local rehearsal receipt is
 `data/processed/phase-14-real-bootstrap.json`.
 
-## Hosted acceptance
+## Completed hosted acceptance
 
-Pending at the implementation checkpoint: publish the validated change to the
-existing repository, then verify automatic loading with no PDF selections,
-physical-page/hash evidence, a refresh, a separate new tab and pending financial
-lookup on the existing Streamlit deployment. A local/network rehearsal or the
-earlier manual-upload success does not satisfy these hosted checks.
+Completed on **2026-11-09 (Asia/Singapore)** against functional commit
+`1c7908aff2887e8acfceacb8a4d2fa4626fa4819` on the existing
+[public app](https://financial-intelligence-copilot-wenric.streamlit.app/).
+The owner authorized the existing app's reboot. Its actual log records a fresh
+startup at 2026-11-08 11:03:39 UTC and server startup at 11:03:59 UTC.
+
+| Hosted check | Actual observation |
+| --- | --- |
+| Original public URL after reboot | Automatically ready: 2 reports / 734 physical pages / 2,159 chunks |
+| PDF selections | None used during these checks |
+| FY2025 risk-governance query | Original evidence at physical PDF page 64; downloaded response JSON checked |
+| Source identity | SHA256 `18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977` |
+| Browser refresh | Returned to ready state without uploads; previous response cleared |
+| Independent new tab | Ready with a fresh question state; actual query controls available |
+| Unconfirmed VONB lookup | Downloaded JSON: `abstained`, `fact_review_pending`, `financial_fact: null` |
+| Fresh incognito window | No login or upload required; actual governance query returned FY2025 physical page 64 |
+| Incognito citation details | Same pinned hash, evidence ID `AIA-2025-EN:p64:88bbd948bd65d781f18d`, character range `[1151, 1344)` |
+| Sharing setting | Observed as public and searchable; unchanged |
+| Source/review/evaluation input files | Byte hashes still match the actual-network rehearsal baseline |
+
+The factual question was: "Which body sets AIA's Risk Appetite and approves its
+Risk Management Framework?" The financial boundary query was: "What is AIA's
+VONB in USD million?" The normal-profile responses were downloaded through the
+real app and retained locally as ignored JSON, not reconstructed from expected
+answers. Incognito evidence was checked in the actual source card and expanded
+citation details; no account sign-in was performed.
+
+### Browser connection diagnosis
+
+An additional problem affected the assisted check: the public Cloud wrapper
+remained on its loading animation while the direct application route worked.
+The browser's visible Network panel showed the iframe document request pending
+in connection-start **Stalled**, with no response body transferred. Cancelling
+the current Chrome debugging session through its browser infobar immediately
+released that request and loaded the original public URL. Subsequent acceptance
+used native screen/accessibility controls with the debugging connection closed.
+The application and source configuration were unchanged during that comparison.
+
+This observation applies to this assisted Chrome session. It is not evidence of
+a general Streamlit outage, an AIA download failure or a latency benchmark. The
+public root URL, not the diagnostic internal-frame route, passed the final
+checks. No further upload or extension-file permission was needed.
+
+![Original public URL ready without report selection](../assets/screenshots/cloud-automatic-ready.jpg)
+
+![Actual pending financial lookup on the automatic runtime](../assets/screenshots/cloud-automatic-kpi-pending.jpg)
+
+Application text is English; browser and vendor controls retain their host
+locale. The ignored local evidence record is
+`data/processed/phase-14-hosted-verification.json`, with actual response exports
+`phase-14-public-post-reboot.response.json` and
+`phase-14-public-kpi-pending.response.json` in the same directory.
+
+This hosted follow-up changes documentation and screenshots only. It retains
+the recorded **657-test** result for the unchanged functional code; it does not
+claim a new software test run, semantic evaluation or human judgment. Diff and
+publication consistency checks are recorded separately.
 
 ## Remaining project gates
 

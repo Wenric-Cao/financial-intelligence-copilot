@@ -91,14 +91,44 @@ require **Allow access to file URLs**. That broader local permission is not
 needed for automatic initialization or normal manual file selection. The app
 does not change browser permissions.
 
+## Assisted-verification browser troubleshooting
+
+During the 2026-11-09 check in Chrome, the public page's embedded app request
+stalled before receiving response bytes while the browser showed an active
+debugging attachment. Ending that attachment through Chrome's debugging
+infobar allowed the request to complete. Subsequent checks used native browser
+controls and screen observations. This describes the observed verification
+environment; it does not establish a Streamlit or AIA service outage.
+
+If an assisted browser hangs while an ordinary browser can open the app, end
+the active browser-debugging attachment and test the public URL with ordinary
+browser controls before changing the server or source configuration. Ordinary
+visitors need no extension or file-URL permission for automatic report loading.
+The optional assisted-upload permission above addresses local file selection;
+it is not a remedy for this observed connection stall.
+
 ## Actual verification records
+
+On **2026-11-09 (Asia/Singapore)**, checks in the existing Chrome profile reached
+the original public URL after the authorized server reboot with no PDF
+selections. The app reported **2 reports, 734 physical pages and 2,159 evidence
+chunks**. Downloaded response JSON confirmed an FY2025 risk-governance answer with
+physical PDF page 64 and the pinned FY2025 source hash. Browser refresh and a
+separately opened tab both reached the ready state. A reviewed VONB lookup
+returned `abstained`, `fact_review_pending` and `financial_fact: null`.
+A separate incognito window reached the ready state without a login or PDF
+selection, then answered the same governance question with FY2025 physical PDF
+page 64. Its expanded citation details displayed the pinned FY2025 source hash
+and evidence character range 1151–1344. The incognito check inspected the UI;
+the downloaded JSON verification above was performed in the existing profile.
+See the [Stage 14 verification record](phase-14-report.md) for the browser-check
+scope, retained evidence and hosted acceptance details.
 
 The earlier [Stage 13 hosted check](phase-13-report.md#completed-hosted-follow-up)
 loaded two real reports into one manual session (734 physical pages / 2,159
 chunks), returned FY2025 page 64, and abstained on an unconfirmed VONB lookup.
 That check did not prove refresh/new-visitor readiness; the distinction is why
-automatic initialization was added. See the [Stage 14 record](phase-14-report.md)
-for the new implementation's actual tests and hosted acceptance status.
+automatic initialization was added.
 
 Historical evaluation runs remain separate. No cloud initialization or upload
 creates a new semantic evaluation, gold approval, financial confirmation or
