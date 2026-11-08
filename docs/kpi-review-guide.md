@@ -94,9 +94,11 @@ These checks do not establish that a column, definition, or financial basis was
 interpreted correctly. Product-owner review remains necessary. The tested
 comparison backend and interface now have separate fact and pair-review gates.
 The UI shows recorded confirmations/readiness and only charts a calculated pair;
-actual approvals and a separate persisted reviewed store remain pending. The
-interface has no approval control and extractive Q&A directs financial requests
-to the financial tabs.
+actual approvals remain pending. Stage 11 adds a separate persisted reviewed
+store exporter/validator; the actual all-pending packet produces zero records.
+The interface has no approval control and extractive Q&A directs financial
+requests to the financial tabs. The UI continues to use current source-checked
+reviews rather than trusting a stored `verified` flag.
 
 ## Record review decisions separately
 
@@ -158,3 +160,24 @@ change rather than percentage growth. Zero or negative prior values require
 review and return no calculated change. A local Decimal context preserves exact
 finite differences and uses at least 34 significant digits for repeating ratios;
 presentation rounding remains separate.
+
+## Export an explicit confirmed-fact projection
+
+Stage 11 provides a separate local reviewed store without modifying candidates
+or recording new decisions:
+
+```bash
+.venv/bin/python scripts/build_verified_store.py \
+  --output data/processed/verified-kpis.rerun.json
+.venv/bin/python scripts/build_verified_store.py \
+  --check data/processed/verified-kpis.rerun.json
+```
+
+Use a new output filename. The current actual packet yields **0/10 reviewed
+facts**, with an empty `records` list. Rechecks bind the current candidate,
+review, manifest and PDF bytes; an old export fails after review revocation or
+source changes. `--check` does not alter files. Consumers must revalidate through
+the loader rather than trust a saved flag. Only explicit confirmed facts appear
+with their recorded reviewer, timestamp, notes and source context. Content hashes
+do not authenticate the reviewer, and fact confirmation leaves comparability
+pending. Numerical Q&A is not connected to this store yet.

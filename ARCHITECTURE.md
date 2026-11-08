@@ -60,6 +60,7 @@ model provider in the current runtime.
 | `financial_kpis.py` | Parse exact `Decimal` values; validate complete numeric tokens, rows, header context and actual PDF provenance; export pending-review CSV |
 | `comparison.py` | Check structural compatibility and perform pure `Decimal` arithmetic; it does not establish owner review or source validity |
 | `kpi_reviews.py` | Bind fact and comparability decisions to complete candidate digests; recheck source candidates and gate comparison results |
+| `verified_store.py` | Persist explicit fact confirmations separately; bind current input bytes and revalidate saved stores, including review revocation |
 | `evaluation.py` | Validate source-backed development drafts, run cases, record errors/latencies, check released spans and export pending human judgments |
 | `evaluation_records.py` | Validate historical run bindings/aggregates and current data dependencies; flag older code/configuration without inventing live scores |
 | `ui_charts.py` | Plot two reported annual levels from a calculated guarded result, preserving exact labels, percent units and source metadata |
@@ -67,6 +68,7 @@ model provider in the current runtime.
 | `ui.py` / `app.py` | Render scope controls, excerpt cards, candidate review and explicit unavailable states using per-session state |
 | `scripts/check_kpi_candidates.py` | Check actual candidate PDF spans and export a pending review sheet |
 | `scripts/check_comparison_readiness.py` | Prepare all-pending review packets or audit guarded comparison readiness against current sources |
+| `scripts/build_verified_store.py` | Export a new local reviewed-fact JSON store or validate an existing one without modification |
 | `scripts/run_evaluation.py` | Load source-checked cases/index, freeze dependency fingerprints, preserve a raw run and create its pending human review packet |
 | `scripts/run_retrieval_smoke.py`, `scripts/run_extractive_smoke.py` | Preserve earlier engineering probes separately from the later development evaluation |
 
@@ -90,6 +92,7 @@ is a reproducible cache, not an authoritative financial store.
 | `data/retrieval_cases.json` | Earlier engineering retrieval probes; not an approved acceptance benchmark |
 | `data/kpi_candidates.json` | Ten unverified AIA metric candidates, short source context, exact offsets and financial-basis caveats |
 | `data/kpi_reviews.json` | Separate fact and annual-pair decisions, currently pending; not a verified financial database |
+| `data/processed/verified-kpis*.json` | Optional reviewed-fact projections; source/review-bound, Git-ignored, currently empty for real data |
 | `data/evaluation_cases.json` | Forty development-exposed question/answer/evidence proposals, all pending owner review |
 | `data/processed/` evaluation/readiness outputs | Raw responses, diagnostic hits, errors, timings, source checks and pending human review packets; Git-ignored |
 | `.env.example` | Reserved configuration names for later work; no current model integration reads an API key |
@@ -232,7 +235,20 @@ definition, currency/unit, period, scope, exchange-rate basis, tax basis and
 restatement. Both facts must be confirmed and the pair explicitly comparable
 before `comparison_results` releases arithmetic. A matching prior-year cell or
 equal scope/basis text cannot replace that decision. There is no UI approval
-button and no automated promotion to a verified store.
+button. The Stage 11 store exporter projects only already-recorded confirmations;
+it cannot create a decision or infer approval from a source match.
+
+`verified_store.py` stores only confirmed facts with their original context,
+decimal strings and complete fact-review metadata. It fingerprints candidate,
+review and manifest bytes plus referenced source PDFs before and after checking
+sources. Loading recomputes the expected projection from current inputs and
+compares canonical JSON, preserving type distinctions such as booleans versus
+integers. Revoked, deleted or changed decisions and altered stores fail closed.
+Exports refuse an existing filename. Candidate records remain unverified and
+unchanged; fact confirmation does not promote pair comparability. These are
+operator-recorded decisions, not authenticated reviewer identities. Consumers
+must use the loader rather than trust a saved `verified` field. The current UI
+and comparisons still read live reviews, and Q&A does not use this store.
 
 The pure functions in `comparison.py` have a narrower contract: they validate
 structural compatibility and calculate exact finite `Decimal` differences.
@@ -299,8 +315,9 @@ feed or trading integration exists.
 
 The remaining gates are explicit:
 
-1. Owner-confirmed financial facts and separate comparability decisions, followed
-   by a distinct reviewed store and its integration with answers/UI.
+1. Owner-confirmed financial facts and separate comparability decisions. A
+   distinct reviewed-store exporter/validator is implemented; populated real
+   inputs and integration with numerical answers remain pending.
 2. Exercise the integrated comparison/chart path on actual data after explicit
    approval; the current positive-path demonstrations use neutral fixtures only.
 3. Owner-approved evaluation gold and human scoring of frozen responses, followed
@@ -308,8 +325,10 @@ The remaining gates are explicit:
 4. Generative answering, embeddings or reranking only as a separately configured
    extension with approved cost/data handling, evidence constraints and semantic
    evaluation. No such model integration is implied by the current excerpt mode.
-5. Any public release requires source-rights review and explicit deployment/push
-   authorization. The present artifact is a local portfolio prototype.
+5. Finished, validated source increments are published to the existing public
+   GitHub repository under the owner's standing authorization. Raw reports and
+   full text remain local; deployment and paid APIs require separate approval.
+   The published artifact is still a local portfolio prototype.
 
 Implemented comparison presentation and historical evaluation inspection do not
 complete those business acceptance gates. The current data still has zero

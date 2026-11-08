@@ -12,3 +12,17 @@ or obscures its original wording.
 
 Direct collaboration with the product owner may follow the language of their
 messages. This does not change the default language of project deliverables.
+
+# Completed increment publication
+
+The product owner authorizes updating the existing public repository,
+`Wenric-Cao/financial-intelligence-copilot`, after each completed and validated
+project increment. Review the diff, run appropriate checks, publish the finished
+change, and verify the remote commit and local synchronization. Report actual
+results and remaining acceptance gates. Preserve unrelated changes and inspect
+remote updates before reconciling them.
+
+Keep raw annual reports, full extracted text, local caches, secrets and internal
+planning documents out of Git. This standing publication instruction does not
+approve financial facts, comparability, gold answers or human evaluation scores.
+Paid APIs and deployment still require separate explicit authorization.

@@ -12,7 +12,7 @@ and demonstration materials. Other languages are used only when necessary, such
 as preserving original source evidence or meeting an explicit requirement.
 See `AGENTS.md` for the project language policy.
 
-## Current implementation: Stage 10 financial and evaluation UI integration
+## Current implementation: Stage 11 reviewed-fact persistence
 
 Read the [product requirements](PRD.md), [implemented architecture](ARCHITECTURE.md),
 [actual evaluation](EVALUATION.md), [English demonstration script](docs/demo-script.md)
@@ -34,6 +34,19 @@ only when every gate passes. Financial KPIs separately shows recorded fact
 confirmations. The current real-data audit still has **0 confirmed facts and
 0/5 pairs calculated**; no actual AIA growth figure or chart has been produced.
 The conditional chart path is tested with explicitly neutral fixtures.
+
+Stage 11 adds a separate local JSON store containing only explicitly confirmed
+KPI facts. Its export/check commands revalidate current source PDFs, candidates
+and review decisions; stale or altered stores are rejected. The actual pending
+AIA packet exports **0 reviewed facts**. Fact confirmation does not approve a
+comparison. The current UI and comparison backend continue to validate live
+reviews; Q&A does not consume the store or unlock numerical answers.
+
+Stage 11 passed **490 automated tests** (5 dependency deprecation warnings),
+Ruff check/format and dependency consistency checks. The new backend/CLI tests
+use explicit nonfinancial fixtures. Real-source export/check retained 0/10
+confirmed facts and 0/5 calculated pairs. See the
+[actual Stage 11 record](docs/phase-11-report.md).
 
 A 40-case development suite and evaluation runner are now available. The actual
 after-fix run completed 40/40 cases, matched 40/40 current-mode engineering
@@ -206,6 +219,34 @@ signatures. Missing decisions remain pending; malformed or stale decisions fail
 closed. The [review guide](docs/kpi-review-guide.md) explains how actual owner
 decisions can be recorded. The command never writes a verified store.
 
+### Export and recheck reviewed KPI facts
+
+After obtaining the registered local PDFs, create a separate local store:
+
+```bash
+.venv/bin/python scripts/build_verified_store.py \
+  --output data/processed/verified-kpis.rerun.json
+.venv/bin/python scripts/build_verified_store.py \
+  --check data/processed/verified-kpis.rerun.json
+```
+
+Choose a new output filename for each export. Missing local sources fail before
+output is written. A successful command with the current real packet produces
+an empty `records` list: all ten facts are still pending. It is a valid empty
+review projection, not a verified financial dataset or financial acceptance.
+
+Each confirmed record retains exact decimal strings, report identity, physical
+page/offsets, definitions and caveats, and the actual recorded reviewer, time,
+notes and checks. Candidate and review files are not edited. The separate store
+binds their bytes, the manifest and referenced PDFs. Review revocation/removal,
+source edits and payload tampering invalidate old stores. Reading JSON directly
+does not validate it; use `load_verified_store` or `--check` against current local
+inputs before use. Files stay under ignored `data/processed/`.
+
+Review metadata records an operator-entered decision; content hashes do not
+authenticate a human reviewer. A confirmed fact retains pending comparability,
+and the existing separate pair/structural gates still govern calculations.
+
 ## Obtain the two official reports manually
 
 1. Open [AIA's official Annual Reports page](https://www.aia.com/en/media-centre/annual-reports).
@@ -318,6 +359,7 @@ scripts/run_retrieval_smoke.py       # Engineering page-hit check, not RAG scori
 scripts/run_extractive_smoke.py      # Excerpt/provenance and refusal probes
 scripts/check_kpi_candidates.py     # Raw-PDF provenance check and pending CSV
 scripts/check_comparison_readiness.py # Pending review packet / guarded audit
+scripts/build_verified_store.py      # Export/revalidate explicit reviewed facts
 scripts/run_evaluation.py            # Actual development run and pending review export
 tests/                             # Neutral fixtures, provenance and scope tests
 data/manifest.csv                  # Actual source metadata for the two reports

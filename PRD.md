@@ -46,7 +46,8 @@ Excluded from the MVP are investment recommendations, forecasts, trading,
 securities accounts, live prices, cross-company rankings, arbitrary PDF uploads,
 complex OCR, universal table extraction, model training and large-scale crawling.
 Original reports are obtained locally from official sources; the application
-does not redistribute them. Paid APIs, public deployment and Git push require
+does not redistribute them. The owner has authorized GitHub updates after each
+completed, validated increment. Paid APIs and public deployment require separate
 explicit authorization.
 
 ## Requirements and acceptance criteria
@@ -54,7 +55,7 @@ explicit authorization.
 | ID / priority | Required user outcome and acceptance criteria | Current status |
 | --- | --- | --- |
 | F1 - report questions / P0 | A user selects FY2024 or FY2025 and receives original excerpts from that report, with company, year, physical `PDF page N`, source link and context. Evidence shortage and unsupported workflows produce an explanation. A request to invent or omit citations does not bypass evidence rules. The owner accepts at least five factual cases, checking relevance and completeness as well as literal wording. | Local extractive workflow implemented. Owner acceptance pending; some multipart answers remain partial. |
-| F2 - financial KPIs / P0 | Display 3-5 common metrics for both years only as verified after explicit fact review. Each input retains value, currency, unit, period, scope, basis and source. Candidate values remain visibly unverified until that decision. | Five metrics / ten candidates and their review interface are implemented. All ten remain unverified; zero facts are confirmed and the reviewed store is pending. |
+| F2 - financial KPIs / P0 | Display 3-5 common metrics for both years only as verified after explicit fact review. Each input retains value, currency, unit, period, scope, basis and source. Candidate values remain visibly unverified until that decision. | Five metrics / ten candidates, their review interface and a separate source-bound reviewed-store exporter/validator are implemented. All ten remain unverified; zero facts are confirmed and the real-data store is empty. |
 | F3 - annual comparison / P0 | Each pair requires confirmed facts and a separate comparability decision. Compare matching company, definition, currency, unit, annual period, scope and basis. Python calculates amount changes and ordinary growth only for a positive prior base; percentage metrics use percentage-point changes. Zero/negative prior bases, incompatible inputs and unresolved tax, currency or restatement issues require review. Charts label years, units and independent input sources. | Guarded Decimal backend, source-bound readiness UI and conditional Plotly charts implemented and tested with neutral quantities, including review revocation. Zero real AIA pairs calculated; actual facts/pairs remain pending. |
 | F4 - traceability / P0 | Every released quote and financial input has inspectable original evidence. Invalid or changed source data prevents reuse of an old result or approval. Financial confirmation, comparability and semantic answer quality are explicit review decisions. Show the research-use notice. | Source checks, pending-review controls and stale-result handling implemented. These controls do not establish semantic or financial correctness; owner review remains pending. |
 | F5 - local experience / P1 | Provide English Ask the Annual Report, Financial KPIs, Year-over-Year and About & Evaluation tabs, clear empty/refusal/error states, and local setup instructions. A user following the README can obtain authorized reports, rebuild local data and inspect three scenarios: fact evidence, a verified number and a comparable annual change. | Four tabs and local preview implemented. Financial tabs consume recorded reviews and gated results; actual verified-number/comparison scenarios await inputs. About now validates the historical forty-case run and labels its date, denominators and missing human scores. Final demonstration and owner acceptance remain pending. |
@@ -87,7 +88,7 @@ materials and decision formats.
 
 ## Current evidence and quality acceptance
 
-The implementation has **446 passing automated tests**. The repaired 40-case
+The implementation has **490 passing automated tests**. The repaired 40-case
 development run recorded **40/40 engineering behavior matches**, **12/12 literal
 released-source spans**, and **21/28 proposed evidence-page hits within five
 results**. There are **0 approved gold answers and 0 human-scored cases**; all
@@ -109,12 +110,13 @@ acceptance cases are needed for a future held-out claim.
 1. Accept factual evidence cases and review the ten KPI candidates and five
    annual pairs, resolving NCI definitions, reported versus CER presentation,
    FY2025 tax changes and any restatement questions.
-2. Populate reviewed inputs from explicit decisions and exercise the integrated
+2. Populate the separate reviewed store from explicit decisions and exercise the integrated
    guarded comparisons/charts on actual data for all three required scenarios.
 3. Approve evaluation references, score frozen responses and publish honest
    results with known omissions and failures.
 4. Complete reproducibility and English demonstration materials, then obtain
-   final owner acceptance. Public release is a separate authorization decision.
+   final owner acceptance. Validated source updates have standing GitHub
+   authorization; deployment remains a separate decision.
 
 Source acquisition, implementation milestones and actual stage records are in
 the [development plan](docs/development-plan.md) and [README](README.md).

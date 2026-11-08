@@ -11,7 +11,7 @@ is recorded with its qualifications.
 | --- | --- | --- |
 | Sources and pages | Two registered local official reports; page parsing and physical-page provenance recorded | Report/source and context acceptance pending |
 | Factual excerpts | Local report-scoped retrieval, exact-span cards, original-text answers and explicit refusals | At least five factual cases must be reviewed for relevance and completeness |
-| KPI facts | Ten source-backed candidates for five metrics across two years | 0/10 fact confirmations; reviewed store not created |
+| KPI facts | Ten source-backed candidates, separate confirmed-fact export and stale-store validator | 0/10 fact confirmations; real-data reviewed store is empty |
 | Comparisons | Separate pair decisions, readiness/source UI and conditional Plotly charts, tested with neutral fixtures | 0/5 actual pairs approved or calculated; real inputs need owner review |
 | Evaluation | Forty development cases, two actual runs, frozen source/run/response digests | 0/40 approved gold answers and 0 human-scored responses; semantic scores unavailable |
 | Portfolio | English README, PRD, architecture, evaluation record and scripted demonstration | Final demonstration/recording and product acceptance pending |
@@ -90,5 +90,7 @@ table-07: proposed answer needs a qualification; see my correction below.
 These lines illustrate a response format; they are not actual approvals. The
 next engineering step depends on the decisions received: correct proposals,
 build reviewed inputs, exercise comparable real-data charts, or compute an agreed human
-evaluation. Final publication, deployment and Git push remain separately
-authorized actions.
+evaluation. Finished, validated source increments are now authorized for
+publication to the existing public GitHub repository. Deployment and paid APIs
+remain separately authorized actions; publication never records a financial or
+evaluation approval.

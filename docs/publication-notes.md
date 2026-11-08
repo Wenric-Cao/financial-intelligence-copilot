@@ -33,7 +33,8 @@ a license to redistribute complete annual reports or imply company endorsement.
 The raw reports must be obtained independently from authorized official sources.
 
 No financial candidate, comparison pair, gold answer or human response rating is
-approved by publication. The latest recorded software checkpoint is 446 passing
-tests; the forty-case development results retain their original recorded date
+approved by publication. The initial public release recorded 446 passing tests;
+Stage 11 records 490 passing tests and an empty real-data reviewed-fact store.
+The forty-case development results retain their original recorded date
 and null human correctness scores. See `EVALUATION.md` and the acceptance guides
 for limitations and remaining work.

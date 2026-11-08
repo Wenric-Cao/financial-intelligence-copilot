@@ -26,7 +26,7 @@ Direct collaboration may follow the product owner's language. See `../AGENTS.md`
 | 1 - project foundation | Environment, project skeleton, PDF page parser, source instructions | Actual parser tests and lint; no invented source records | Engineering checks complete |
 | 2 - real ingestion | Acquire both official reports; manifest and page checks | Two local PDFs, actual hashes, warning review, physical-page spot checks | Engineering checks complete; owner review pending |
 | 3 - retrieval and Q&A | Page-preserving chunks, year filters and selected local extractive mode; model integration is a separate decision | Five owner-reviewed factual questions with traceable page evidence | Local retrieval, excerpt responses and review UI implemented; owner factual acceptance pending |
-| 4 - KPIs and comparison | Candidate extraction, owner verification, reviewed store, comparability rules, Plotly | 3-5 common metrics with independent sources and tested Python calculations | Ten candidates, recorded fact projection, source-bound readiness and guarded Plotly UI implemented; owner facts/pairs, persisted reviewed store and actual-data comparisons pending |
+| 4 - KPIs and comparison | Candidate extraction, owner verification, reviewed store, comparability rules, Plotly | 3-5 common metrics with independent sources and tested Python calculations | Ten candidates, source-bound reviewed-store export/validation, readiness and guarded Plotly UI implemented; owner facts/pairs, populated real-data store and actual comparisons pending |
 | 5 - evaluation | At least 40 source-reviewed questions and stored raw runs | Actual correctness, citation, numeric, abstention, retrieval, and latency results | Forty development cases, 55 source-checked evidence proposals, reproducible runner and two raw runs implemented; approved gold and human semantic scores pending |
 | 6 - portfolio delivery | Four Streamlit tabs; README, PRD, architecture, evaluation, screenshots, English demo | Reproducible setup and three demonstrable scenarios | English interface, documentation set, recorded screenshots and scripted prototype demo available; isolated-source tests pass; verified-number/comparison demo, final recording and acceptance pending |
 
@@ -55,8 +55,9 @@ approval/configuration of external model use. This is a plan, not completed work
   reserve some questions for final acceptance rather than tuning on every case.
 - Isolate dependencies in a local venv and use `python -m` for checks so commands
   run with the intended interpreter. Add heavy dependencies only when needed.
-- Keep raw PDFs, extracted full text, indexes, and secrets out of Git. External
-  API calls, deployment, and pushing require the owner's authorization.
+- Keep raw PDFs, extracted full text, indexes, and secrets out of Git. The owner
+  authorizes GitHub updates after each completed, validated increment. External
+  paid APIs and deployment still require separate authorization.
 
 ## Current iteration and next work
 
@@ -104,6 +105,14 @@ edits/removal and stale records clear prior outputs. Actual AIA data remains ten
 pending facts and five pending pairs; no real growth figure/chart was produced.
 All 446 tests passed, including neutral approved/revoked UI paths; no candidate
 or human review decision changed. See `phase-10-report.md`.
+
+Stage 11 adds a separate reviewed-fact JSON store and export/check command. Only
+explicitly confirmed facts enter the projection. Full input-byte fingerprints,
+source rechecks and strict payload comparison reject stale, revoked or tampered
+stores. Current AIA facts remain pending and the real-data projection is empty.
+The candidate and review datasets stay unchanged. Numerical Q&A and populated
+financial acceptance remain pending. Actual commands/results are recorded in
+`phase-11-report.md`.
 
 Next, the owner can review at least five factual cases in the interface and the
 ten KPI candidates using `kpi-review-guide.md`. VONB, ANP, VONB margin, OPAT and
