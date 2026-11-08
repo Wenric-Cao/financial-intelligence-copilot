@@ -93,7 +93,7 @@ materials and decision formats.
 
 ## Current evidence and quality acceptance
 
-The implementation has **575 passing automated tests**. The repaired 40-case
+The implementation has **609 passing automated tests**. The repaired 40-case
 development run recorded **40/40 engineering behavior matches**, **12/12 literal
 released-source spans**, and **21/28 proposed evidence-page hits within five
 results**. There are **0 approved gold answers and 0 human-scored cases**; all

@@ -66,6 +66,7 @@ model provider in the current runtime.
 | `kpi_reviews.py` | Bind fact and comparability decisions to complete candidate digests; recheck source candidates and gate comparison results |
 | `verified_store.py` | Persist explicit fact confirmations separately; bind current input bytes and revalidate saved stores, including review revocation |
 | `financial_answer.py` | Recognize bounded single-metric annual lookup forms and release only a source-revalidated, scope-matching confirmed fact |
+| `session_data.py` | Prepare a complete isolated session runtime from exactly two pinned PDF uploads, using staged parser/index/source checks and public metadata snapshots |
 | `evaluation.py` | Validate source-backed development drafts, run cases, record errors/latencies, check released spans and export pending human judgments |
 | `evaluation_records.py` | Validate historical run bindings/aggregates and current data dependencies; flag older code/configuration without inventing live scores |
 | `ui_charts.py` | Plot two reported annual levels from a calculated guarded result, preserving exact labels, percent units and source metadata |
@@ -225,8 +226,26 @@ than subsequent same-scope questions.
 
 `.streamlit/config.toml` binds the local server to `127.0.0.1`, disables static
 file serving and usage statistics, and configures the English workspace theme.
-This is a local preview configuration, not a hosted multi-user service or a
-public deployment.
+These settings retain the local preview defaults. The hosted session-data
+workflow is described below.
+
+For the existing Community Cloud deployment, the UI can accept exactly the two
+registered official PDF versions into separate 16 MiB upload controls. The
+server validates complete-byte hashes before parsing; it never treats uploaded
+content as instructions or retrieves reports automatically. A private
+`TemporaryDirectory` owns each session's runtime. `session_data.py` copies only
+allowlisted public metadata, builds raw/page/index files in staging, revalidates
+the index and recorded fact projection, then atomically renames the completed
+tree before UI adoption. It never populates the source checkout or copies
+secrets, an existing full-text cache or historical evaluation raw runs.
+
+Session adoption checks the source metadata fingerprint again. A later metadata
+or review change discards the old session workspace. Clearing loaded reports
+removes the session-owned temporary runtime and resets its upload controls;
+other sessions and the prepared local source workspace are separate. An idle
+disconnect does not establish instantaneous deletion or durable retention.
+This supports user-supplied authorized processing, not a preloaded public corpus
+or a source-rights conclusion. See [cloud setup](docs/cloud-setup.md).
 
 ## Financial facts, reviews and arithmetic
 

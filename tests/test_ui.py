@@ -4,6 +4,7 @@ import csv
 import json
 from copy import deepcopy
 from pathlib import Path
+from types import SimpleNamespace
 
 import pymupdf
 import pytest
@@ -748,3 +749,162 @@ def test_lookup_snapshot_race_prevents_numeric_display(ui_workspace, monkeypatch
     assert response(app) is None
     assert "Reported annual level" not in comparison_metrics(app)
     assert any("Local sources changed during the query" in item.value for item in app.error)
+
+
+@pytest.fixture
+def cloud_checkout(ui_workspace, tmp_path):
+    """A fresh checkout has public metadata but none of the ignored runtime files."""
+    write_neutral_candidate(ui_workspace)
+    candidates = json.loads((ui_workspace / "data/kpi_candidates.json").read_text())["candidates"]
+    (ui_workspace / "data/kpi_reviews.json").write_text(json.dumps(make_review_packet(candidates)))
+    root = tmp_path / "cloud-checkout"
+    (root / "data").mkdir(parents=True)
+    for relative in (
+        "data/manifest.csv",
+        "data/retrieval_policy.json",
+        "data/kpi_candidates.json",
+        "data/kpi_reviews.json",
+    ):
+        (root / relative).write_bytes((ui_workspace / relative).read_bytes())
+    uploads = {}
+    with (root / "data/manifest.csv").open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            uploads[row["doc_id"]] = (
+                ui_workspace / "data/raw" / row["local_filename"]
+            ).read_bytes()
+    return {"root": root, "uploads": uploads}
+
+
+def supply_fixture_uploads(monkeypatch, uploads, *, generation=0):
+    """Feed real neutral PDF bytes at the uploader boundary; keep all processing real."""
+
+    def uploaded_pdf(label, **kwargs):
+        prefix = f"session_report_{generation}_"
+        if not kwargs["key"].startswith(prefix):
+            return None
+        document_id = kwargs["key"].removeprefix(prefix)
+        content = uploads.get(document_id)
+        return None if content is None else SimpleNamespace(getvalue=lambda: content)
+
+    monkeypatch.setattr(ui.st, "file_uploader", uploaded_pdf)
+
+
+def load_cloud_fixture(cloud_checkout, monkeypatch):
+    supply_fixture_uploads(monkeypatch, cloud_checkout["uploads"])
+    app = app_for(cloud_checkout["root"])
+    button(app, "Load official reports").click().run(timeout=30)
+    assert not app.exception
+    return app
+
+
+def test_cloud_missing_data_offers_only_registered_report_uploads(cloud_checkout):
+    app = app_for(cloud_checkout["root"])
+    assert not app.exception
+    assert "Report data has not been loaded in this session." in rendered_text(app)
+    uploaders = app.get("file_uploader")
+    assert [element.proto.label for element in uploaders] == [
+        "AIA FY2024 official annual report (PDF)",
+        "AIA FY2025 official annual report (PDF)",
+    ]
+    assert button(app, "Load official reports").disabled
+    assert button(app, "Find evidence").disabled
+    assert not (cloud_checkout["root"] / "data/processed").exists()
+
+
+def test_cloud_upload_restores_evidence_in_isolated_workspace_and_can_clear(
+    cloud_checkout, monkeypatch
+):
+    project = cloud_checkout["root"]
+    before = {path: path.read_bytes() for path in (project / "data").iterdir()}
+    app = load_cloud_fixture(cloud_checkout, monkeypatch)
+    workspace = Path(app.session_state["_session_workspace"])
+    assert workspace.exists() and workspace != project
+    assert not workspace.is_relative_to(project)
+    assert any(
+        "Session reports loaded: 2 reports, 4 physical pages" in item.value for item in app.success
+    )
+    store = json.loads((workspace / "data/processed/verified-kpis.json").read_text())
+    assert store["records"] == []
+    assert not button(app, "Find evidence").disabled
+    submit(app)
+    assert response(app)["status"] == "extractive_evidence"
+    assert any(item.value == BOARD_TEXT for item in app.code)
+    assert "PDF page 2" in rendered_text(app)
+    assert not (project / "data/processed").exists()
+    assert not (project / "data/raw").exists()
+    assert all(path.read_bytes() == content for path, content in before.items())
+
+    button(app, "Clear loaded reports").click().run()
+    assert not app.exception
+    assert not workspace.exists()
+    assert response(app) is None
+    assert button(app, "Find evidence").disabled
+    assert button(app, "Load official reports").disabled
+    assert app.session_state["_session_upload_generation"] == 2
+    assert all(path.read_bytes() == content for path, content in before.items())
+
+
+def test_wrong_report_upload_cannot_create_session_or_modify_checkout(cloud_checkout, monkeypatch):
+    uploads = {**cloud_checkout["uploads"], "AIA-2024-EN": b"%PDF-TEST ONLY changed fixture bytes"}
+    supply_fixture_uploads(monkeypatch, uploads)
+    app = app_for(cloud_checkout["root"])
+    button(app, "Load official reports").click().run(timeout=30)
+    assert not app.exception
+    assert any("Could not load the registered reports" in item.value for item in app.error)
+    assert "_session_workspace" not in app.session_state
+    assert button(app, "Find evidence").disabled
+    assert not (cloud_checkout["root"] / "data/processed").exists()
+    assert not (cloud_checkout["root"] / "data/raw").exists()
+
+
+def test_project_metadata_change_discards_old_session_without_automatic_reload(
+    cloud_checkout, monkeypatch
+):
+    app = load_cloud_fixture(cloud_checkout, monkeypatch)
+    workspace = Path(app.session_state["_session_workspace"])
+    submit(app)
+    path = cloud_checkout["root"] / "data/kpi_reviews.json"
+    path.write_bytes(path.read_bytes() + b"\n")
+    app.run()
+    assert not app.exception
+    assert not workspace.exists()
+    assert response(app) is None
+    assert "_session_workspace" not in app.session_state
+    assert "configuration changed" in rendered_text(app)
+    assert button(app, "Find evidence").disabled
+    assert not (cloud_checkout["root"] / "data/processed").exists()
+
+
+def test_two_sessions_do_not_share_loaded_reports_or_cleanup(cloud_checkout, monkeypatch):
+    first = load_cloud_fixture(cloud_checkout, monkeypatch)
+    second = load_cloud_fixture(cloud_checkout, monkeypatch)
+    first_workspace = Path(first.session_state["_session_workspace"])
+    second_workspace = Path(second.session_state["_session_workspace"])
+    assert first_workspace != second_workspace
+    assert first_workspace.exists() and second_workspace.exists()
+    button(first, "Clear loaded reports").click().run()
+    assert not first.exception
+    assert not first_workspace.exists() and second_workspace.exists()
+    submit(second)
+    assert response(second)["status"] == "extractive_evidence"
+    assert any(item.value == BOARD_TEXT for item in second.code)
+    button(second, "Clear loaded reports").click().run()
+
+
+def test_failed_replacement_preserves_previous_valid_session(cloud_checkout, monkeypatch):
+    app = load_cloud_fixture(cloud_checkout, monkeypatch)
+    workspace = Path(app.session_state["_session_workspace"])
+    submit(app)
+    uploads = {**cloud_checkout["uploads"], "AIA-2025-EN": b"%PDF-TEST ONLY invalid replacement"}
+    supply_fixture_uploads(
+        monkeypatch, uploads, generation=app.session_state["_session_upload_generation"]
+    )
+    app.run()
+    button(app, "Load official reports").click().run(timeout=30)
+    assert not app.exception
+    assert Path(app.session_state["_session_workspace"]) == workspace
+    assert workspace.exists()
+    assert response(app)["status"] == "extractive_evidence"
+    assert any(item.value == BOARD_TEXT for item in app.code)
+    assert any("Could not load the registered reports" in item.value for item in app.error)
+    button(app, "Clear loaded reports").click().run()

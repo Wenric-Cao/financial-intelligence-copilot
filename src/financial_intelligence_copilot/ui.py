@@ -6,6 +6,7 @@ import json
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import streamlit as st
 
@@ -15,6 +16,10 @@ from financial_intelligence_copilot.financial_answer import answer_reviewed_kpi
 from financial_intelligence_copilot.financial_kpis import candidate_csv
 from financial_intelligence_copilot.kpi_reviews import comparison_results, load_review_state
 from financial_intelligence_copilot.retrieval import load_retriever
+from financial_intelligence_copilot.session_data import (
+    prepare_session_workspace,
+    session_metadata_fingerprint,
+)
 from financial_intelligence_copilot.ui_charts import comparison_figure
 from financial_intelligence_copilot.ui_state import (
     official_pdf_link,
@@ -32,6 +37,135 @@ EXAMPLES = {
     "Financial metric boundary": "What is AIA's VONB in USD million?",
 }
 DATA_ERRORS = (OSError, ValueError, KeyError, TypeError)
+
+
+def _clear_session_workspace() -> None:
+    """Discard only the temporary workspace owned by this Streamlit session."""
+    _clear_response_and_engine()
+    temporary = st.session_state.pop("_session_tempdir", None)
+    for key in (
+        "_session_workspace",
+        "_session_project_root",
+        "_session_metadata_fingerprint",
+        "_session_report_stats",
+    ):
+        st.session_state.pop(key, None)
+    st.session_state["_session_upload_generation"] = (
+        st.session_state.get("_session_upload_generation", 0) + 1
+    )
+    if temporary is not None:
+        temporary.cleanup()
+
+
+def _current_workspace(project_root: Path) -> tuple[Path, str | None]:
+    """Use session data only while its original public source configuration matches."""
+    owner_root = st.session_state.get("_session_project_root")
+    if owner_root is not None and owner_root != str(project_root):
+        _clear_session_workspace()
+    active = st.session_state.get("_session_workspace")
+    if active is None:
+        return project_root, None
+    try:
+        current = session_metadata_fingerprint(project_root)
+    except DATA_ERRORS:
+        current = None
+    if current != st.session_state.get("_session_metadata_fingerprint"):
+        _clear_session_workspace()
+        return (
+            project_root,
+            "The registered source or review configuration changed. Load reports again.",
+        )
+    return Path(active), None
+
+
+def _load_session_reports(project_root: Path, reports: dict[str, bytes]) -> dict:
+    """Adopt a fully checked new workspace; failed uploads preserve the previous one."""
+    temporary = TemporaryDirectory(prefix="fic-report-session-")
+    try:
+        stats = prepare_session_workspace(project_root, reports, Path(temporary.name) / "workspace")
+        workspace = Path(stats["root"])
+        workspace_fingerprint(workspace, read_documents(workspace))
+        if stats["metadata_fingerprint"] != session_metadata_fingerprint(project_root):
+            raise ValueError("Registered source configuration changed while reports were loading")
+        _clear_session_workspace()
+    except Exception:
+        temporary.cleanup()
+        raise
+    st.session_state["_session_tempdir"] = temporary
+    st.session_state["_session_workspace"] = str(workspace)
+    st.session_state["_session_project_root"] = str(project_root)
+    st.session_state["_session_metadata_fingerprint"] = stats["metadata_fingerprint"]
+    st.session_state["_session_report_stats"] = stats
+    return stats
+
+
+def _render_session_setup(project_root: Path, data_error: str | None, notice: str | None) -> None:
+    """Load only the two registered reports into isolated temporary server storage."""
+    active = st.session_state.get("_session_workspace") is not None
+    if notice:
+        st.warning(notice)
+    if active:
+        stats = st.session_state["_session_report_stats"]
+        st.success(
+            f"Session reports loaded: {stats['document_count']} reports, "
+            f"{stats['page_count']} physical pages and {stats['chunk_count']} evidence chunks."
+        )
+        st.caption("Report bytes matched the registered sources. Financial review is separate.")
+        if st.button("Clear loaded reports", key="clear_session_reports"):
+            try:
+                _clear_session_workspace()
+            except DATA_ERRORS as exc:
+                st.error("Could not completely clear temporary report files. " + str(exc))
+            else:
+                st.rerun()
+    elif data_error:
+        st.warning("Report data has not been loaded in this session.")
+    with st.expander("Load official AIA reports for this session", expanded=bool(data_error)):
+        st.write(
+            "Load the registered AIA FY2024 and FY2025 English annual reports. "
+            "Only the two registered PDF versions are accepted; other documents are rejected."
+        )
+        st.caption(
+            "Use reports you are authorized to process. Files are uploaded to temporary server "
+            "storage for this session, not to GitHub. Full reports and extracted text are not "
+            "offered for download. No model API is called or financial approval recorded. "
+            "You may need to load reports again after a restart or a new session."
+        )
+        try:
+            documents = read_documents(project_root)
+        except DATA_ERRORS as exc:
+            st.error("The registered source inventory is unavailable. " + str(exc))
+            return
+        uploads = {}
+        generation = st.session_state.get("_session_upload_generation", 0)
+        for document in sorted(documents, key=lambda item: item["fiscal_year"]):
+            year = document["fiscal_year"]
+            st.link_button(f"Get the official FY{year} English report", document["source_url"])
+            uploaded = st.file_uploader(
+                f"AIA FY{year} official annual report (PDF)",
+                type=["pdf"],
+                accept_multiple_files=False,
+                max_upload_size=16,
+                key=f"session_report_{generation}_{document['doc_id']}",
+            )
+            if uploaded is not None:
+                uploads[document["doc_id"]] = uploaded.getvalue()
+        if st.button(
+            "Load official reports",
+            key="load_session_reports",
+            disabled=len(uploads) != len(documents),
+        ):
+            try:
+                with st.spinner("Checking report hashes, physical pages and evidence index..."):
+                    _load_session_reports(project_root, uploads)
+            except DATA_ERRORS as exc:
+                st.error("Could not load the registered reports. " + str(exc))
+                st.caption(
+                    "Check that each file is the full English report for its labeled year. "
+                    "A changed official version needs source review; its hash is not updated here."
+                )
+            else:
+                st.rerun()
 
 
 def _clear_response_and_engine() -> None:
@@ -593,12 +727,14 @@ def _render_comparisons(root: Path, revision: str | None, data_error) -> None:
 
 
 def run_app(root: Path | None = None) -> None:
-    root = Path(root).resolve() if root is not None else PROJECT_ROOT
+    project_root = Path(root).resolve() if root is not None else PROJECT_ROOT
     st.set_page_config(page_title="Financial Intelligence Copilot", page_icon="📖", layout="wide")
     st.caption("FINANCIAL RESEARCH WORKSPACE")
     st.title("Financial Intelligence Copilot")
     st.write("Annual-report research, with evidence you can inspect.")
     st.caption("Local research modes · Research demonstration only - not investment advice.")
+
+    root, session_notice = _current_workspace(project_root)
 
     documents, revision, data_error = [], None, None
     try:
@@ -664,8 +800,13 @@ def run_app(root: Path | None = None) -> None:
                 "Definitions, multiple metrics and comparisons are outside this lookup mode."
             )
         if data_error:
-            st.error(f"Local data is unavailable. {data_error}")
-            st.caption("Restore the registered local files and rebuild the index using the README.")
+            with st.expander("Source diagnostic details"):
+                st.error(f"Local data is unavailable. {data_error}")
+                st.caption(
+                    "Load the registered reports for this session, or restore local files "
+                    "and rebuild the index using the README."
+                )
+        _render_session_setup(project_root, data_error, session_notice)
         st.session_state.setdefault("question", EXAMPLES["Risk governance"])
         st.selectbox(
             "Start with an example",

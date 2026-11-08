@@ -12,7 +12,28 @@ and demonstration materials. Other languages are used only when necessary, such
 as preserving original source evidence or meeting an explicit requirement.
 See `AGENTS.md` for the project language policy.
 
-## Current implementation: Stage 12 reviewed KPI lookup
+## Current implementation: cloud session data loading
+
+For the existing Streamlit deployment, use
+[session data loading](docs/cloud-setup.md). A fresh GitHub checkout intentionally
+contains no raw reports, page text or index. The app now accepts only the two
+registered official PDFs in separate FY2024/FY2025 fields, verifies their pinned
+hashes, and builds a complete isolated temporary workspace for that app session.
+It makes no automatic report-download request and offers no full-report download.
+Use only reports you are authorized to process. Existing prepared local data
+continues to work without uploads. Loading reports never approves a financial
+fact, comparison or evaluation judgment.
+
+The original source/review metadata stays unchanged. Runtime storage is temporary
+and may need preparing again after a new session or restart. The cloud data-load
+repair addresses missing runtime files; it does not complete financial or human
+evaluation acceptance.
+
+Cloud repair checks passed **609 automated tests** (5 existing dependency
+deprecation warnings), Ruff check/format and dependency consistency checks.
+A clean isolated rehearsal with the actual reports rebuilt 734 physical pages
+and 2,159 chunks, returned FY2025 page 64 evidence, and kept financial facts
+pending. See the [repair record](docs/phase-13-report.md).
 
 Read the [product requirements](PRD.md), [implemented architecture](ARCHITECTURE.md),
 [actual evaluation](EVALUATION.md), [English demonstration script](docs/demo-script.md)
@@ -87,6 +108,10 @@ The Stage 12 capture shows the genuine pending state: the new mode releases no
 unreviewed AIA financial value.
 
 ### First run in a new checkout
+
+On the hosted app, load the two official PDFs using its session upload controls
+as described in the [cloud guide](docs/cloud-setup.md). For a local source
+checkout, follow the steps below.
 
 1. [Install the environment](#install-the-environment) and run the tests. Neutral
    test fixtures do not require the official reports.
