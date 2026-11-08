@@ -11,6 +11,7 @@ from tempfile import TemporaryDirectory
 import streamlit as st
 
 from financial_intelligence_copilot.answer import answer_question
+from financial_intelligence_copilot.cloud_data import get_cloud_workspace
 from financial_intelligence_copilot.evaluation_records import load_development_record
 from financial_intelligence_copilot.financial_answer import answer_reviewed_kpi
 from financial_intelligence_copilot.financial_kpis import candidate_csv
@@ -37,6 +38,56 @@ EXAMPLES = {
     "Financial metric boundary": "What is AIA's VONB in USD million?",
 }
 DATA_ERRORS = (OSError, ValueError, KeyError, TypeError)
+
+
+def _empty_runtime_checkout(project_root: Path) -> bool:
+    """Initialize a clean checkout, without concealing partial or damaged local data."""
+    documents = read_documents(project_root)
+    paths = [project_root / "data/processed/retrieval-index.json"]
+    for item in documents:
+        paths.extend(
+            [
+                project_root / "data/raw" / item["local_filename"],
+                project_root / "data/processed" / f"{item['doc_id']}.pages.json",
+            ]
+        )
+    return not any(path.exists() or path.is_symlink() for path in paths)
+
+
+def _automatic_workspace(project_root: Path) -> tuple[Path, dict | None, str | None]:
+    """Adopt only the official runtime cache; a failed attempt needs an explicit retry."""
+    revision = None
+    try:
+        if not _empty_runtime_checkout(project_root):
+            st.session_state.pop("_cloud_workspace_handle", None)
+            return project_root, None, None
+        revision = session_metadata_fingerprint(project_root)
+        failure = st.session_state.get("_cloud_setup_failure")
+        if (
+            failure
+            and failure["project_root"] == str(project_root)
+            and failure["revision"] == revision
+        ):
+            return project_root, None, failure["message"]
+        with st.spinner("Preparing official AIA reports and checking source evidence..."):
+            stats = get_cloud_workspace(project_root)
+        if (
+            stats["metadata_fingerprint"] != revision
+            or session_metadata_fingerprint(project_root) != revision
+        ):
+            raise ValueError("Registered source configuration changed during initialization")
+        st.session_state["_cloud_workspace_handle"] = stats
+        st.session_state.pop("_cloud_setup_failure", None)
+        return Path(stats["root"]), stats, None
+    except DATA_ERRORS as exc:
+        st.session_state.pop("_cloud_workspace_handle", None)
+        message = str(exc)
+        st.session_state["_cloud_setup_failure"] = {
+            "project_root": str(project_root),
+            "revision": revision,
+            "message": message,
+        }
+        return project_root, None, message
 
 
 def _clear_session_workspace() -> None:
@@ -726,7 +777,7 @@ def _render_comparisons(root: Path, revision: str | None, data_error) -> None:
     )
 
 
-def run_app(root: Path | None = None) -> None:
+def run_app(root: Path | None = None, *, auto_load_reports: bool = False) -> None:
     project_root = Path(root).resolve() if root is not None else PROJECT_ROOT
     st.set_page_config(page_title="Financial Intelligence Copilot", page_icon="📖", layout="wide")
     st.caption("FINANCIAL RESEARCH WORKSPACE")
@@ -735,6 +786,9 @@ def run_app(root: Path | None = None) -> None:
     st.caption("Local research modes · Research demonstration only - not investment advice.")
 
     root, session_notice = _current_workspace(project_root)
+    cloud_stats, cloud_error = None, None
+    if auto_load_reports and root == project_root:
+        root, cloud_stats, cloud_error = _automatic_workspace(project_root)
 
     documents, revision, data_error = [], None, None
     try:
@@ -799,14 +853,33 @@ def run_app(root: Path | None = None) -> None:
                 "Only explicitly confirmed facts in the current local reviewed store can be shown. "
                 "Definitions, multiple metrics and comparisons are outside this lookup mode."
             )
-        if data_error:
+        if cloud_stats:
+            st.success(
+                f"Official reports ready: {cloud_stats['document_count']} reports, "
+                f"{cloud_stats['page_count']} physical pages and "
+                f"{cloud_stats['chunk_count']:,} evidence chunks."
+            )
+            st.caption(
+                "Automatically loaded from AIA and checked against the registered hashes. "
+                "You can refresh or open a new tab without uploading reports. "
+                "Financial fact confirmation remains separate."
+            )
+        elif cloud_error:
+            st.error("Automatic report loading could not finish. Retry or use the upload fallback.")
+            if st.button("Retry official report loading", key="retry_cloud_reports"):
+                st.session_state.pop("_cloud_setup_failure", None)
+                st.rerun()
+            with st.expander("Source diagnostic details"):
+                st.code(cloud_error, language=None)
+        elif data_error:
             with st.expander("Source diagnostic details"):
                 st.error(f"Local data is unavailable. {data_error}")
                 st.caption(
                     "Load the registered reports for this session, or restore local files "
                     "and rebuild the index using the README."
                 )
-        _render_session_setup(project_root, data_error, session_notice)
+        if not cloud_stats:
+            _render_session_setup(project_root, data_error, session_notice)
         st.session_state.setdefault("question", EXAMPLES["Risk governance"])
         st.selectbox(
             "Start with an example",

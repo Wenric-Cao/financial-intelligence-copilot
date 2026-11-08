@@ -67,6 +67,7 @@ model provider in the current runtime.
 | `verified_store.py` | Persist explicit fact confirmations separately; bind current input bytes and revalidate saved stores, including review revocation |
 | `financial_answer.py` | Recognize bounded single-metric annual lookup forms and release only a source-revalidated, scope-matching confirmed fact |
 | `session_data.py` | Prepare a complete isolated session runtime from exactly two pinned PDF uploads, using staged parser/index/source checks and public metadata snapshots |
+| `cloud_data.py` | Download only the two pinned official report identities, prepare an atomic temporary runtime, and share a revalidated process cache across browser sessions |
 | `evaluation.py` | Validate source-backed development drafts, run cases, record errors/latencies, check released spans and export pending human judgments |
 | `evaluation_records.py` | Validate historical run bindings/aggregates and current data dependencies; flag older code/configuration without inventing live scores |
 | `ui_charts.py` | Plot two reported annual levels from a calculated guarded result, preserving exact labels, percent units and source metadata |
@@ -226,13 +227,39 @@ than subsequent same-scope questions.
 
 `.streamlit/config.toml` binds the local server to `127.0.0.1`, disables static
 file serving and usage statistics, and configures the English workspace theme.
-These settings retain the local preview defaults. The hosted session-data
-workflow is described below.
+These settings retain the local preview defaults. The hosted initialization
+and optional manual fallback are described below.
+
+The product owner selected automatic initialization for public visitors. By
+default `app.py` enables it through `FIC_AUTO_LOAD_REPORTS=true` in the process
+environment; `.env.example` is documentation and is not automatically read.
+Only a completely empty runtime inventory triggers fetching. Existing complete
+local datasets retain precedence, and partial/corrupt local datasets retain
+their errors. The UI test entry point defaults to no automatic network access.
+
+`cloud_data.py` pins both official URLs, hashes and filenames independently of
+the manifest, rejects redirects, bounds download size/time, and prepares a
+complete isolated workspace using the existing parser/index/review checks.
+It records actual runtime download timestamps separately from manifest history.
+A locked single-entry process cache owns the temporary directory. Adopted
+handles keep files alive during revision replacement; browser sessions cannot
+delete this shared cache. Cache access rechecks source/review metadata and actual
+workspace bytes. A failure never releases a stale workspace. No browser identity
+or resume token is needed: this cache contains only the fixed official sources,
+never visitor-uploaded data. Reruns, refreshes and new tabs can reuse it; a server
+restart automatically reconstructs it from official sources. This is automatic
+reconstruction, not durable storage.
+
+Preparation does not edit source/review metadata or approve financial facts.
+Failures disable questions, expose a retry control and allow the manual fallback.
+The UI retains a failed attempt for that session/revision to avoid downloading
+again on every unrelated widget interaction. New source versions require explicit
+pin/manifest/evidence review rather than accepting new bytes automatically.
 
 For the existing Community Cloud deployment, the UI can accept exactly the two
 registered official PDF versions into separate 16 MiB upload controls. The
 server validates complete-byte hashes before parsing; it never treats uploaded
-content as instructions or retrieves reports automatically. A private
+content as instructions. This is a fallback separate from automatic fetching. A private
 `TemporaryDirectory` owns each session's runtime. `session_data.py` copies only
 allowlisted public metadata, builds raw/page/index files in staging, revalidates
 the index and recorded fact projection, then atomically renames the completed
@@ -244,8 +271,9 @@ or review change discards the old session workspace. Clearing loaded reports
 removes the session-owned temporary runtime and resets its upload controls;
 other sessions and the prepared local source workspace are separate. An idle
 disconnect does not establish instantaneous deletion or durable retention.
-This supports user-supplied authorized processing, not a preloaded public corpus
-or a source-rights conclusion. See [cloud setup](docs/cloud-setup.md).
+This fallback supports user-supplied authorized processing and does not establish
+source rights. Neither path exposes full reports/text through download or static
+routes. See [cloud setup](docs/cloud-setup.md).
 
 ## Financial facts, reviews and arithmetic
 

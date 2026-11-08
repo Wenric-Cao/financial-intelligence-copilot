@@ -93,11 +93,11 @@ def ui_workspace(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def app_for(root: Path) -> AppTest:
+def app_for(root: Path, *, auto_load_reports: bool = False) -> AppTest:
     script = (
         "from pathlib import Path\n"
         "from financial_intelligence_copilot.ui import run_app\n"
-        f"run_app(root=Path({str(root)!r}))\n"
+        f"run_app(root=Path({str(root)!r}), auto_load_reports={auto_load_reports!r})\n"
     )
     return AppTest.from_string(script, default_timeout=10).run()
 
@@ -908,3 +908,120 @@ def test_failed_replacement_preserves_previous_valid_session(cloud_checkout, mon
     assert any(item.value == BOARD_TEXT for item in app.code)
     assert any("Could not load the registered reports" in item.value for item in app.error)
     button(app, "Clear loaded reports").click().run()
+
+
+@pytest.fixture
+def automatic_runtime(cloud_checkout, tmp_path):
+    """Prepare actual neutral PDF pages/index; replace only the network/cache boundary."""
+    from financial_intelligence_copilot.session_data import prepare_session_workspace
+
+    return prepare_session_workspace(
+        cloud_checkout["root"], cloud_checkout["uploads"], tmp_path / "automatic-runtime"
+    )
+
+
+def test_automatic_reports_work_in_fresh_sessions_without_uploads(
+    cloud_checkout, automatic_runtime, monkeypatch
+):
+    calls = []
+
+    def prepared_official_reports(root):
+        calls.append(root)
+        return automatic_runtime
+
+    monkeypatch.setattr(ui, "get_cloud_workspace", prepared_official_reports)
+    project = cloud_checkout["root"]
+    first = app_for(project, auto_load_reports=True)
+    assert not first.exception
+    assert any(
+        "Official reports ready: 2 reports, 4 physical pages" in e.value for e in first.success
+    )
+    assert not first.error
+    assert not first.get("file_uploader")
+    assert not button(first, "Find evidence").disabled
+    submit(first)
+    assert response(first)["status"] == "extractive_evidence"
+    assert any(item.value == BOARD_TEXT for item in first.code)
+    assert "PDF page 2" in rendered_text(first)
+
+    # A fresh AppTest has no previous WebSocket/session state, like a new tab or refresh.
+    second = app_for(project, auto_load_reports=True)
+    assert response(second) is None
+    submit(second)
+    assert response(second)["status"] == "extractive_evidence"
+    second.selectbox(key="fiscal_year").set_value(2024).run()
+    submit(second)
+    assert any(item.value == COUNCIL_TEXT for item in second.code)
+    assert not (project / "data/raw").exists()
+    assert not (project / "data/processed").exists()
+    assert calls and all(root == project for root in calls)
+
+
+def test_automatic_loading_failure_can_retry_without_looping(
+    cloud_checkout, automatic_runtime, monkeypatch
+):
+    calls = []
+
+    def unavailable(root):
+        calls.append(root)
+        raise OSError("Official source unavailable (neutral test fixture)")
+
+    monkeypatch.setattr(ui, "get_cloud_workspace", unavailable)
+    app = app_for(cloud_checkout["root"], auto_load_reports=True)
+    assert not app.exception
+    assert any("Automatic report loading could not finish" in e.value for e in app.error)
+    assert button(app, "Find evidence").disabled
+    assert len(app.get("file_uploader")) == 2
+    app.run()
+    assert len(calls) == 1
+    monkeypatch.setattr(ui, "get_cloud_workspace", lambda root: automatic_runtime)
+    button(app, "Retry official report loading").click().run()
+    assert not app.exception
+    assert not app.error
+    submit(app)
+    assert response(app)["status"] == "extractive_evidence"
+
+
+def test_automatic_loading_does_not_mask_partial_local_data(cloud_checkout, monkeypatch):
+    def must_not_fetch(root):
+        raise AssertionError("Partial local data must not switch to another dataset")
+
+    monkeypatch.setattr(ui, "get_cloud_workspace", must_not_fetch)
+    project = cloud_checkout["root"]
+    (project / "data/processed").mkdir()
+    (project / "data/processed/AIA-2024-EN.pages.json").write_text("incomplete fixture")
+    app = app_for(project, auto_load_reports=True)
+    assert not app.exception
+    assert any("Local data is unavailable" in e.value for e in app.error)
+    assert button(app, "Find evidence").disabled
+
+
+def test_manual_upload_fallback_stays_private_when_automatic_loading_fails(
+    cloud_checkout, monkeypatch
+):
+    def unavailable(root):
+        raise OSError("Official source unavailable (neutral test fixture)")
+
+    monkeypatch.setattr(ui, "get_cloud_workspace", unavailable)
+    supply_fixture_uploads(monkeypatch, cloud_checkout["uploads"])
+    first = app_for(cloud_checkout["root"], auto_load_reports=True)
+    button(first, "Load official reports").click().run(timeout=30)
+    assert not first.exception
+    submit(first)
+    assert response(first)["status"] == "extractive_evidence"
+    second = app_for(cloud_checkout["root"], auto_load_reports=True)
+    assert button(second, "Find evidence").disabled
+    assert "_session_workspace" not in second.session_state
+    button(first, "Clear loaded reports").click().run()
+
+
+def test_automatic_reports_do_not_confirm_financial_candidates(
+    cloud_checkout, automatic_runtime, monkeypatch
+):
+    monkeypatch.setattr(ui, "get_cloud_workspace", lambda root: automatic_runtime)
+    app = app_for(cloud_checkout["root"], auto_load_reports=True)
+    app.selectbox(key="answer_mode").set_value("Reviewed KPI lookup").run()
+    submit(app, "What is VONB for FY2025?")
+    assert response(app)["status"] == "abstained"
+    assert response(app)["reason"] == "fact_review_pending"
+    assert response(app)["financial_fact"] is None

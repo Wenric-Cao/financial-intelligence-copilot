@@ -12,24 +12,32 @@ and demonstration materials. Other languages are used only when necessary, such
 as preserving original source evidence or meeting an explicit requirement.
 See `AGENTS.md` for the project language policy.
 
-## Current implementation: cloud session data loading
+## Current implementation: automatic official-report loading
 
-For the existing Streamlit deployment, use
-[session data loading](docs/cloud-setup.md). A fresh GitHub checkout intentionally
-contains no raw reports, page text or index. The app now accepts only the two
-registered official PDFs in separate FY2024/FY2025 fields, verifies their pinned
-hashes, and builds a complete isolated temporary workspace for that app session.
-It makes no automatic report-download request and offers no full-report download.
-Use only reports you are authorized to process. Existing prepared local data
-continues to work without uploads. Loading reports never approves a financial
-fact, comparison or evaluation judgment.
+The product owner selected a public link that works without visitor uploads.
+On a clean checkout, `app.py` automatically downloads the two registered AIA
+reports from their exact official HTTPS URLs, verifies pinned SHA256 hashes,
+and builds a complete temporary server workspace. New tabs and refreshed pages
+reuse that checked runtime. A server restart downloads and prepares it again.
+See [cloud initialization and troubleshooting](docs/cloud-setup.md).
 
-The original source/review metadata stays unchanged. Runtime storage is temporary
-and may need preparing again after a new session or restart. The cloud data-load
-repair addresses missing runtime files; it does not complete financial or human
-evaluation acceptance.
+Raw reports, page text and indexes remain outside Git. The app offers no full
+report/text download and calls no model API. Existing local data takes precedence;
+partial or damaged local datasets are not silently replaced. If official fetching
+fails, an explicit retry and the isolated two-report upload fallback remain
+available. Uploads are never promoted into the shared automatic cache.
 
-Cloud repair checks passed **609 automated tests** (5 existing dependency
+The original source/review metadata stays unchanged. Automatic loading enables
+original-excerpt research; it does not approve financial facts, comparisons or
+human evaluation judgments. The actual financial review gates remain pending.
+
+Automatic initialization passed **657 automated tests**, lint/format checks and
+dependency consistency checks. An actual-network local rehearsal downloaded both
+pinned official versions and preserved the same evidence and pending financial
+state. Hosted refresh/new-tab acceptance is recorded separately in the
+[Stage 14 report](docs/phase-14-report.md).
+
+The earlier session-only cloud repair passed **609 automated tests** (5 existing dependency
 deprecation warnings), Ruff check/format and dependency consistency checks.
 A clean isolated rehearsal with the actual reports rebuilt 734 physical pages
 and 2,159 chunks, returned FY2025 page 64 evidence, and kept financial facts
@@ -115,9 +123,11 @@ unreviewed AIA financial value.
 
 ### First run in a new checkout
 
-On the hosted app, load the two official PDFs using its session upload controls
-as described in the [cloud guide](docs/cloud-setup.md). For a local source
-checkout, follow the steps below.
+On the hosted app, wait for automatic official-report initialization and the
+**Official reports ready** message. No browser upload permission is needed.
+For a local source checkout, follow the steps below. Running `app.py` without
+local runtime files also enables automatic loading; set the process environment
+variable `FIC_AUTO_LOAD_REPORTS=false` to use only local data or manual uploads.
 
 1. [Install the environment](#install-the-environment) and run the tests. Neutral
    test fixtures do not require the official reports.

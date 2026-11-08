@@ -47,6 +47,14 @@ reviewed KPIs, guarded Python comparisons, comparison charts, actual evaluation
 records and a reproducible English portfolio demonstration. Financial review and
 evaluation acceptance remain necessary to complete that scope.
 
+For the public Streamlit link, the product owner selected automatic official
+report initialization on 2026-11-08. Visitors should not need to upload PDFs.
+A fresh server obtains only the two pinned official versions, validates them
+and prepares a shared temporary runtime; refreshes/new tabs reuse it, and a
+server restart rebuilds it. Network or source-version failures remain explicit,
+with manual upload as a fallback. This experience does not imply approved
+financial figures or completed human evaluation.
+
 Excluded from the MVP are investment recommendations, forecasts, trading,
 securities accounts, live prices, cross-company rankings, arbitrary PDF uploads,
 complex OCR, universal table extraction, model training and large-scale crawling.
@@ -93,7 +101,7 @@ materials and decision formats.
 
 ## Current evidence and quality acceptance
 
-The implementation has **609 passing automated tests**. The repaired 40-case
+The implementation has **657 passing automated tests**. The repaired 40-case
 development run recorded **40/40 engineering behavior matches**, **12/12 literal
 released-source spans**, and **21/28 proposed evidence-page hits within five
 results**. There are **0 approved gold answers and 0 human-scored cases**; all
