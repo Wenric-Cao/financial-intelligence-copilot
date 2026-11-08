@@ -35,6 +35,12 @@ A clean isolated rehearsal with the actual reports rebuilt 734 physical pages
 and 2,159 chunks, returned FY2025 page 64 evidence, and kept financial facts
 pending. See the [repair record](docs/phase-13-report.md).
 
+The hosted follow-up on 2026-11-08 also completed the actual browser upload of
+both reports. The cloud app reported 734 physical pages / 2,159 chunks, returned
+the FY2025 page 64 source card, and refused an unconfirmed VONB lookup. Actual
+downloaded response JSON was retained locally; this is an engineering check,
+not financial approval or a new semantic evaluation.
+
 Read the [product requirements](PRD.md), [implemented architecture](ARCHITECTURE.md),
 [actual evaluation](EVALUATION.md), [English demonstration script](docs/demo-script.md)
 and [owner acceptance worksheet](docs/acceptance-checklist.md). The documentation

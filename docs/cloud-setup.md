@@ -61,6 +61,18 @@ an appropriate rights basis; neither is enabled by this repair.
 
 ## Local use and troubleshooting
 
+The actual hosted upload/query path was checked on 2026-11-08. Both registered
+reports loaded into one isolated session (734 pages, 2,159 chunks), a factual
+query returned FY2025 physical page 64, and the unconfirmed VONB lookup abstained.
+See the [hosted verification record](phase-13-report.md#completed-hosted-follow-up).
+
+For browser-assisted uploads, OpenAI's [Chrome extension upload instructions](https://learn.chatgpt.com/docs/chrome-extension#upload-files)
+require **Allow access to file URLs**. This is a local extension permission,
+not a missing cloud application dependency. It is broader than selecting these
+two PDFs; use it temporarily if appropriate and turn it off after assisted
+verification. Normal manual selection through the upload controls remains an
+alternative. The application does not change browser permissions.
+
 An already-prepared local workspace continues to work without uploads. To
 rebuild local files manually, follow the README's parsing/indexing commands.
 The cloud upload route uses the same parser and source checks.

@@ -98,9 +98,50 @@ pending.
 
 This tested repair is published to the existing repository under the owner's
 standing instruction. It updates the owner's existing hosted app rather than
-creating a new account or hosting service. After that deployment updates, verify
-the two upload controls, load the registered reports, submit a factual query and
-inspect the returned physical page link. Live observations and screenshots are
-retained locally under ignored processed outputs; they must not be invented or
-inferred from unit tests. Each new visitor/session must load its own authorized
-report copies; the app does not distribute a shared complete corpus.
+creating a new account or hosting service. The live follow-up below completes
+the previously blocked upload/query check. Each new visitor/session must load
+its own authorized report copies; the app does not distribute a shared complete
+corpus.
+
+### Completed hosted follow-up
+
+Actual browser observations were recorded on 2026-11-08, with the downloaded
+responses checked by **10:21:12 UTC**. The functional app version was commit
+`288343a3a1a0e3ec5fc87f2bc91791c46ab6cef9`.
+
+The initial assisted upload was blocked by Chrome's extension file-URL
+permission. The owner explicitly reported enabling that setting. A fresh browser
+task then uploaded the two original registered files through the separate
+FY2024/FY2025 controls and clicked **Load official reports**. No permission was
+changed by the application, and no original report PDF was committed to GitHub.
+
+| Live cloud observation | Actual result |
+| --- | --- |
+| Official reports uploaded and adopted | 2 |
+| App-reported physical pages / chunks | 734 / 2,159 |
+| Original-excerpt query | `Which body sets AIA's Risk Appetite and approves its Risk Management Framework?` |
+| Downloaded factual response | `local_extractive`, `extractive_evidence`, selected `AIA-2025-EN` |
+| Released physical source page | 64; official report link ends in `#page=64` |
+| Response source identity | FY2025 PDF SHA256 matches the registered `18537f928c3bb4879c35566252f2f8420c6a3a237016af4706b081a77d126977` |
+| Reviewed KPI query | `What is AIA's VONB in USD million?` |
+| Downloaded KPI response | `abstained`, `fact_review_pending`, `financial_fact=null` |
+| Candidate/review/manifest/evaluation-case input bytes | Unchanged |
+
+Both actual response JSON downloads are retained under ignored
+`data/processed/phase-13-cloud-fy2025.response.json` and
+`data/processed/phase-13-cloud-kpi.response.json`. The observed outcomes and
+resolved upload blocker are recorded in the ignored cloud verification and
+publication receipts. No browser time was presented as an app latency benchmark.
+
+The public captures show actual hosted behavior:
+
+![Hosted original-text evidence at physical PDF page 64](../assets/screenshots/cloud-factual-evidence.jpg)
+
+![Hosted unconfirmed KPI lookup abstention](../assets/screenshots/cloud-kpi-pending.jpg)
+
+The follow-up changes only documentation and screenshots. The 609-test software
+checkpoint above was not represented as a new test execution. The cloud checks
+do not approve the factual answer's completeness, any financial value or pair,
+gold answers, or semantic evaluation scores. The owner can turn off the temporary
+extension file-URL permission after verification. Future new sessions still need
+their own report loading.
